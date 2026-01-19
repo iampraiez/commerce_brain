@@ -55,6 +55,7 @@ function SearchBar() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9 pr-9 bg-muted/50 border-transparent focus:bg-background focus:border-input transition-all"
+          autoComplete="search"
         />
         {searchQuery && (
           <button

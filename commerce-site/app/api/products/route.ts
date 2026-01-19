@@ -1,6 +1,5 @@
 import { getDB } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
@@ -8,7 +7,7 @@ export async function GET(request: NextRequest) {
     const ip = request.headers.get("x-forwarded-for") || "unknown";
     // Looser limit for search: 60 requests per minute
     try {
-      await checkRateLimit(ip, "search", 60, 60);
+      await checkRateLimit(ip, "search", 10000, 10);
     } catch (error) {
       return NextResponse.json(
         { message: "Too many search requests. Please try again later." },

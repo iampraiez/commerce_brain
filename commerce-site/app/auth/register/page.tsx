@@ -70,7 +70,9 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Create Account
+          </CardTitle>
           <CardDescription className="text-center">
             Sign up to start shopping
           </CardDescription>
@@ -95,6 +97,7 @@ export default function RegisterPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                autoComplete="name"
               />
             </div>
 
@@ -110,6 +113,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                autoComplete="email"
               />
             </div>
 
@@ -125,6 +129,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
             </div>
 
@@ -140,6 +145,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
             </div>
 
@@ -155,7 +161,10 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/auth/login" className="font-medium text-accent hover:underline">
+              <Link
+                href="/auth/login"
+                className="font-medium text-accent hover:underline"
+              >
                 Sign in
               </Link>
             </p>
