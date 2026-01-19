@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useSearchParams } from "next/navigation";
+import { AlertCircle } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -48,6 +49,7 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>("");
   
   const searchQuery = searchParams?.get("search") || "";
   const [selectedCategory, setSelectedCategory] = useState(
@@ -56,42 +58,117 @@ function HomeContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchProducts = useCallback(
-    async (page: number) => {
+  // Use ref to track if we're currently fetching to prevent duplicate requests
+  const isFetchingRef = useRef(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      // Prevent duplicate fetches
+      if (isFetchingRef.current) return;
+      
+      isFetchingRef.current = true;
       setIsLoading(true);
+      setError("");
+      
       try {
         const params = new URLSearchParams();
-        params.append("page", page.toString());
+        params.append("page", "1");
         params.append("limit", "12");
         if (searchQuery) params.append("search", searchQuery);
         if (selectedCategory !== "All")
           params.append("category", selectedCategory);
 
         const response = await fetch(`/api/products?${params}`);
+        
+        if (!response.ok) {
+          if (response.status === 429) {
+            setError("Too many requests. Please wait a moment and try again.");
+          } else {
+            setError("Failed to load products. Please try again.");
+          }
+          return;
+        }
+
         const data: PaginationData = await response.json();
-        setProducts(data.products);
-        setCurrentPage(data.pagination.page);
-        setTotalPages(data.pagination.pages);
+        
+        // Safe defaults
+        setProducts(data?.products || []);
+        setCurrentPage(data?.pagination?.page || 1);
+        setTotalPages(data?.pagination?.pages || 1);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setError("An error occurred while loading products.");
       } finally {
         setIsLoading(false);
+        isFetchingRef.current = false;
       }
-    },
-    [searchQuery, selectedCategory],
-  );
+    };
 
-  useEffect(() => {
-    fetchProducts(1);
-  }, [fetchProducts]);
+    fetchProducts();
+  }, [searchQuery, selectedCategory]); // Only depend on actual search/category changes
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setCurrentPage(1);
   };
 
+  const handlePageChange = async (page: number) => {
+    if (isFetchingRef.current || page < 1 || page > totalPages) return;
+    
+    isFetchingRef.current = true;
+    setIsLoading(true);
+    setError("");
+    
+    try {
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", "12");
+      if (searchQuery) params.append("search", searchQuery);
+      if (selectedCategory !== "All")
+        params.append("category", selectedCategory);
+
+      const response = await fetch(`/api/products?${params}`);
+      
+      if (!response.ok) {
+        if (response.status === 429) {
+          setError("Too many requests. Please wait a moment and try again.");
+        } else {
+          setError("Failed to load products. Please try again.");
+        }
+        return;
+      }
+
+      const data: PaginationData = await response.json();
+      
+      // Safe defaults
+      setProducts(data?.products || []);
+      setCurrentPage(data?.pagination?.page || page);
+      setTotalPages(data?.pagination?.pages || 1);
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError("An error occurred while loading products.");
+    } finally {
+      setIsLoading(false);
+      isFetchingRef.current = false;
+    }
+  };
+
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-red-800 font-medium">Error</p>
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        </div>
+      )}
+
       {/* Category Tabs */}
       <div className="mb-8">
         <h2 className="text-sm font-semibold text-muted-foreground mb-3">
@@ -147,8 +224,8 @@ function HomeContent() {
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 py-8">
               <Button
-                onClick={() => fetchProducts(currentPage - 1)}
-                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading}
                 variant="outline"
               >
                 Previous
@@ -161,11 +238,12 @@ function HomeContent() {
                   return (
                     <Button
                       key={pageNum}
-                      onClick={() => fetchProducts(pageNum)}
+                      onClick={() => handlePageChange(pageNum)}
                       variant={
                         currentPage === pageNum ? "default" : "outline"
                       }
                       size="sm"
+                      disabled={isLoading}
                     >
                       {pageNum}
                     </Button>
@@ -173,8 +251,8 @@ function HomeContent() {
                 })}
               </div>
               <Button
-                onClick={() => fetchProducts(currentPage + 1)}
-                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || isLoading}
                 variant="outline"
               >
                 Next

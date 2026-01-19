@@ -41,10 +41,18 @@ export default function ProductsPage() {
           params.append("category", selectedCategory);
 
         const response = await fetch(`/api/products?${params}`);
+        
+        if (!response.ok) {
+          console.error("Failed to fetch products:", response.status);
+          setProducts([]);
+          return;
+        }
+
         const data = await response.json();
-        setProducts(data);
+        setProducts(data?.products || data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setProducts([]);
       } finally {
         setIsLoading(false);
       }

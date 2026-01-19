@@ -47,11 +47,17 @@ function SearchContent() {
         params.append("search", query);
 
         const response = await fetch(`/api/products?${params}`);
+        
+        if (!response.ok) {
+          console.error("Failed to fetch search results:", response.status);
+          return;
+        }
+
         const data: PaginationData = await response.json();
-        setProducts(data.products);
-        setCurrentPage(data.pagination.page);
-        setTotalPages(data.pagination.pages);
-        setTotalResults(data.pagination.total);
+        setProducts(data?.products || []);
+        setCurrentPage(data?.pagination?.page || page);
+        setTotalPages(data?.pagination?.pages || 1);
+        setTotalResults(data?.pagination?.total || 0);
       } catch (error) {
         console.error("Error fetching search results:", error);
       } finally {
@@ -62,12 +68,49 @@ function SearchContent() {
   );
 
   useEffect(() => {
-    if (query) {
-      fetchProducts(1);
-    } else {
+    if (!query) {
       setIsLoading(false);
+      setProducts([]);
+      return;
     }
-  }, [query, fetchProducts]);
+
+    const fetchProductsOnMount = async () => {
+      setIsLoading(true);
+      try {
+        const params = new URLSearchParams();
+        params.append("page", "1");
+        params.append("limit", "12");
+        params.append("search", query);
+
+        const response = await fetch(`/api/products?${params}`);
+        
+        if (!response.ok) {
+          console.error("Failed to fetch search results:", response.status);
+          setProducts([]);
+          setCurrentPage(1);
+          setTotalPages(1);
+          setTotalResults(0);
+          return;
+        }
+
+        const data: PaginationData = await response.json();
+        setProducts(data?.products || []);
+        setCurrentPage(data?.pagination?.page || 1);
+        setTotalPages(data?.pagination?.pages || 1);
+        setTotalResults(data?.pagination?.total || 0);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        setProducts([]);
+        setCurrentPage(1);
+        setTotalPages(1);
+        setTotalResults(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductsOnMount();
+  }, [query]); // Only depend on query, not fetchProducts
 
 
   return (

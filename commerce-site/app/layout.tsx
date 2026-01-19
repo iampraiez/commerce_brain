@@ -57,7 +57,7 @@ export default function RootLayout({
           <Header />
           {children}
         </SessionProviderWrapper>
-        <Analytics />
+        {process.env.NODE_ENV === "development" && <Analytics />}
       </body>
     </html>
   );
