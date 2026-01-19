@@ -9,8 +9,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-27.acpi.3"
 });
 
+import { checkRateLimit } from "@/lib/rate-limit";
+
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    try {
+      await checkRateLimit(ip, "checkout", 10, 60); // 10 attempts per minute
+    } catch (error) {
+      return NextResponse.json(
+        { message: "Too many checkout attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id || !session?.user?.email) {

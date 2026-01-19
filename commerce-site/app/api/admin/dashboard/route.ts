@@ -5,7 +5,7 @@ import { getDB } from "@/lib/db";
 
 async function isAdmin(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  return session?.user?.role === "admin";
+  return (session?.user as any).role === "admin";
 }
 
 export async function GET(request: NextRequest) {
@@ -30,7 +30,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate total revenue
     const orders = await ordersCollection.find({}).toArray();
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+    const totalRevenue = Array.isArray(orders) && orders.length > 0
+      ? orders.reduce((sum, order) => sum + (order.total || 0), 0)
+      : 0;
 
     // Get recent orders
     const recentOrders = await ordersCollection

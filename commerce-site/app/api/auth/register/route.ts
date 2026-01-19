@@ -2,8 +2,20 @@ import { connectDB } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
+import { checkRateLimit } from "@/lib/rate-limit";
+
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    try {
+      await checkRateLimit(ip, "register", 5, 3600); // 5 attempts per hour
+    } catch (error) {
+      return NextResponse.json(
+        { message: "Too many registration attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { name, email, password } = body;
 

@@ -17,22 +17,29 @@ function SearchBar() {
   );
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  // Sync URL to State (handle navigation)
+  useEffect(() => {
+    const paramsSearch = searchParams?.get("search") || "";
+    if (paramsSearch !== searchQuery) {
+      setSearchQuery(paramsSearch);
+    }
+  }, [searchParams]);
+
+  // Sync State to URL (handle typing)
   useEffect(() => {
     const params = new URLSearchParams(searchParams?.toString());
-    if (debouncedSearchQuery) {
-      params.set("search", debouncedSearchQuery);
-    } else {
-      params.delete("search");
-    }
-    // Always reset page to 1 on new search
-    params.delete("page");
-
-    // Only push if the query actually changed to avoid unnecessary history entries/refetches
     const currentSearch = searchParams?.get("search") || "";
+
     if (debouncedSearchQuery !== currentSearch) {
+      if (debouncedSearchQuery) {
+        params.set("search", debouncedSearchQuery);
+      } else {
+        params.delete("search");
+      }
+      params.delete("page"); // Reset page on new search
       router.push(`/?${params.toString()}`);
     }
-  }, [debouncedSearchQuery, router, searchParams]);
+  }, [debouncedSearchQuery, router]);
 
   const handleClear = () => {
     setSearchQuery("");

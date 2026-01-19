@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft, Eye, AlertCircle } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/use-recently-viewed";
 
 interface Product {
@@ -23,18 +23,33 @@ export default function RecentlyViewedPage() {
   const { recentProducts, isLoading, clearRecentlyViewed } = useRecentlyViewed();
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
   const fetchProducts = useCallback(async () => {
+    if (!recentProducts || recentProducts.length === 0) {
+      setProductsLoading(false);
+      return;
+    }
+
     setProductsLoading(true);
+    setError("");
     try {
       const productList = await Promise.all(
-        recentProducts.map((item) =>
-          fetch(`/api/products/${item.productId}`).then((res) => res.json()),
-        ),
+        recentProducts.map(async (item) => {
+          try {
+            const res = await fetch(`/api/products/${item.productId}`);
+            if (!res.ok) return null;
+            return await res.json();
+          } catch (err) {
+            console.error(`Failed to fetch product ${item.productId}:`, err);
+            return null;
+          }
+        }),
       );
       setProducts(productList.filter(Boolean));
     } catch (error) {
       console.error("Error fetching products:", error);
+      setError("Failed to load recently viewed products. Please try again.");
     } finally {
       setProductsLoading(false);
     }
@@ -47,8 +62,6 @@ export default function RecentlyViewedPage() {
       setProductsLoading(false);
     }
   }, [recentProducts, fetchProducts, isLoading]);
-
- 
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,6 +88,19 @@ export default function RecentlyViewedPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-12">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Error</p>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+            <Button onClick={fetchProducts} variant="outline" size="sm" className="flex-shrink-0">
+              Retry
+            </Button>
+          </div>
+        )}
+
         {productsLoading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">

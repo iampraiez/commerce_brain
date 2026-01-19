@@ -113,10 +113,12 @@ export default function OrdersPage() {
                               Items
                             </p>
                             <p className="text-lg font-semibold">
-                              {order.items.reduce(
-                                (sum: number, item: any) => sum + item.quantity,
-                                0,
-                              )}
+                              {Array.isArray(order.items) && order.items.length > 0
+                                ? order.items.reduce(
+                                    (sum: number, item: any) => sum + (item.quantity || 0),
+                                    0,
+                                  )
+                                : 0}
                             </p>
                           </div>
 

@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft } from "lucide-react";
+import { Heart, ArrowLeft, AlertCircle } from "lucide-react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface Product {
   _id: string;
@@ -24,6 +25,7 @@ export default function WishlistPage() {
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -38,26 +40,39 @@ export default function WishlistPage() {
 
   const fetchWishlist = async () => {
     setIsLoading(true);
+    setError("");
     try {
       // Get wishlist IDs
       const wishlistRes = await fetch("/api/wishlist");
+      if (!wishlistRes.ok) {
+        throw new Error("Failed to fetch wishlist");
+      }
       const wishlistData = await wishlistRes.json();
       const productIds = wishlistData.productIds || [];
       setWishlistIds(productIds.map((id: any) => id.$oid || id.toString?.() || id));
 
-      // Fetch full product details
+      // Fetch full product details only if we have IDs
       if (productIds.length > 0) {
         const products = await Promise.all(
-          productIds.map((id: any) =>
-            fetch(`/api/products/${id.$oid || id.toString?.() || id}`).then((res) =>
-              res.json()
-            )
-          )
+          productIds.map(async (id: any) => {
+            try {
+              const productId = id.$oid || id.toString?.() || id;
+              const res = await fetch(`/api/products/${productId}`);
+              if (!res.ok) return null;
+              return await res.json();
+            } catch (err) {
+              console.error(`Failed to fetch product:`, err);
+              return null;
+            }
+          })
         );
         setWishlistProducts(products.filter(Boolean));
+      } else {
+        setWishlistProducts([]);
       }
     } catch (error) {
       console.error("Error fetching wishlist:", error);
+      setError("Failed to load your wishlist. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -72,13 +87,14 @@ export default function WishlistPage() {
       setWishlistProducts(wishlistProducts.filter((p) => p._id !== productId));
     } catch (error) {
       console.error("Error removing from wishlist:", error);
+      setError("Failed to remove item from wishlist.");
     }
   };
 
   if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Loading wishlist...</p>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -103,6 +119,19 @@ export default function WishlistPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-12">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Error</p>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+            <Button onClick={fetchWishlist} variant="outline" size="sm" className="flex-shrink-0">
+              Retry
+            </Button>
+          </div>
+        )}
+
         {wishlistProducts.length === 0 ? (
           <div className="text-center py-12">
             <Heart className="w-16 h-16 mx-auto text-muted-foreground mb-4 opacity-50" />

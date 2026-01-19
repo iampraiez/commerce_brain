@@ -2,6 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "./db";
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
+import { checkRateLimit } from "./rate-limit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,6 +14,15 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        const headersList = headers();
+        const ip = headersList.get("x-forwarded-for") || "unknown";
+        
+        try {
+          await checkRateLimit(ip, "login", 5, 60); // 5 attempts per minute
+        } catch (error) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
+
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password required");
         }

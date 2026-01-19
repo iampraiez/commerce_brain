@@ -43,6 +43,14 @@ export async function POST(request: NextRequest) {
     }
 
     const { productId } = await request.json();
+
+    if (!productId || typeof productId !== "string" || productId.length !== 24) {
+      return NextResponse.json(
+        { message: "Invalid product ID" },
+        { status: 400 }
+      );
+    }
+
     const db = await getDB();
     const wishlistCollection = db.collection("wishlists");
 
@@ -73,6 +81,13 @@ export async function DELETE(request: NextRequest) {
 
     const { searchParams } = request.nextUrl;
     const productId = searchParams.get("productId");
+
+    if (!productId || productId.length !== 24) {
+      return NextResponse.json(
+        { message: "Invalid product ID" },
+        { status: 400 }
+      );
+    }
 
     const db = await getDB();
     const wishlistCollection = db.collection("wishlists");

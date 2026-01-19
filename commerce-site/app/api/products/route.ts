@@ -1,8 +1,21 @@
 import { getDB } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
+import { checkRateLimit } from "@/lib/rate-limit";
+
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    // Looser limit for search: 60 requests per minute
+    try {
+      await checkRateLimit(ip, "search", 60, 60);
+    } catch (error) {
+      return NextResponse.json(
+        { message: "Too many search requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get("category");
     const search = searchParams.get("search");
@@ -19,15 +32,26 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      const searchTerms = search.trim().split(/\s+/);
-      if (searchTerms.length > 0) {
-        query.$and = searchTerms.map((term) => ({
-          $or: [
-            { name: { $regex: term, $options: "i" } },
-            { description: { $regex: term, $options: "i" } },
-            { category: { $regex: term, $options: "i" } },
-          ],
-        }));
+      // Validate search query: not too long, not empty after trim
+      const trimmedSearch = search.trim();
+      if (trimmedSearch.length === 0) {
+        // Empty search, ignore it
+      } else if (trimmedSearch.length > 100) {
+        return NextResponse.json(
+          { message: "Search query is too long" },
+          { status: 400 }
+        );
+      } else {
+        const searchTerms = trimmedSearch.split(/\s+/);
+        if (searchTerms.length > 0) {
+          query.$and = searchTerms.map((term) => ({
+            $or: [
+              { name: { $regex: term, $options: "i" } },
+              { description: { $regex: term, $options: "i" } },
+              { category: { $regex: term, $options: "i" } },
+            ],
+          }));
+        }
       }
     }
 
