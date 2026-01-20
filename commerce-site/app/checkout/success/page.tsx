@@ -59,7 +59,7 @@ export default function CheckoutSuccessPage() {
                 variant="outline"
                 className="w-full bg-transparent"
               >
-                <Link href="/products">Continue Shopping</Link>
+                <Link href="/">Continue Shopping</Link>
               </Button>
             </div>
           </CardContent>

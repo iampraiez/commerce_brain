@@ -218,7 +218,7 @@ export default function OrderDetailPage() {
                   asChild
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4"
                 >
-                  <Link href="/products">Continue Shopping</Link>
+                  <Link href="/">Continue Shopping</Link>
                 </Button>
               </CardContent>
             </Card>

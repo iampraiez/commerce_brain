@@ -33,7 +33,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError(result.error);
       } else if (result?.ok) {
-        router.push("/products");
+        router.push("/");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -110,9 +110,6 @@ export default function LoginPage() {
                 >
                   Sign up
                 </Link>
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Demo: admin@example.com / admin123
               </p>
             </div>
           </CardContent>

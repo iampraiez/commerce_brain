@@ -19,11 +19,14 @@ export default function CheckoutCancelPage() {
           </p>
 
           <div className="space-y-3">
-            <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+              asChild
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
               <Link href="/cart">Back to Cart</Link>
             </Button>
             <Button asChild variant="outline" className="w-full bg-transparent">
-              <Link href="/products">Continue Shopping</Link>
+              <Link href="/">Continue Shopping</Link>
             </Button>
           </div>
         </CardContent>

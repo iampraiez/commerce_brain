@@ -65,7 +65,9 @@ export default function ProfilePage() {
 
               <div>
                 <p className="text-sm text-muted-foreground">Full Name</p>
-                <p className="font-semibold">{session.user.name || "Not provided"}</p>
+                <p className="font-semibold">
+                  {session.user.name || "Not provided"}
+                </p>
               </div>
 
               <div>
@@ -83,7 +85,10 @@ export default function ProfilePage() {
               {session.user.role === "admin" && (
                 <>
                   <div className="border-t border-border pt-4">
-                    <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Button
+                      asChild
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
                       <Link href="/admin/dashboard">Admin Dashboard</Link>
                     </Button>
                   </div>
@@ -102,23 +107,30 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button asChild className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  asChild
+                  className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90"
+                >
                   <Link href="/orders">
                     <Package className="w-4 h-4 mr-2" />
                     View My Orders
                   </Link>
                 </Button>
 
-                <Button asChild variant="outline" className="w-full justify-start bg-transparent">
-                  <Link href="/products">
-                    Continue Shopping
-                  </Link>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start bg-transparent"
+                >
+                  <Link href="/">Continue Shopping</Link>
                 </Button>
 
-                <Button asChild variant="outline" className="w-full justify-start bg-transparent">
-                  <Link href="/cart">
-                    View Cart
-                  </Link>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start bg-transparent"
+                >
+                  <Link href="/cart">View Cart</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -131,7 +143,11 @@ export default function ProfilePage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Manage your account preferences and settings.
                 </p>
-                <Button variant="outline" className="w-full bg-transparent" disabled>
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  disabled
+                >
                   Edit Profile (Coming Soon)
                 </Button>
               </CardContent>

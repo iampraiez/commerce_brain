@@ -77,23 +77,32 @@ export function Header() {
     <header className="border-b border-border sticky top-0 z-40 bg-background/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
             <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-primary font-bold group-hover:scale-110 transition-transform">
               <ShoppingCart className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-bold text-primary hidden sm:block">Shop</h1>
+            <h1 className="text-2xl font-bold text-primary hidden sm:block">
+              Shop
+            </h1>
           </Link>
 
           <div className="flex-1 max-w-md mx-4">
-            <Suspense fallback={<div className="h-10 bg-muted rounded-md w-full" />}>
+            <Suspense
+              fallback={<div className="h-10 bg-muted rounded-md w-full" />}
+            >
               <SearchBar />
             </Suspense>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {session?.user ? (
               <>
-                <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex">
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="hidden sm:inline-flex"
+                >
                   <Link href="/wishlist">
                     <Heart className="w-5 h-5" />
                     <span className="sr-only">Wishlist</span>

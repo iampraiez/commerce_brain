@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const headersList = headers();
+        const headersList = await headers();
         const ip = headersList.get("x-forwarded-for") || "unknown";
         
         try {

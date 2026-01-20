@@ -128,7 +128,7 @@ export default function ProductDetailPage() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <p className="text-red-600 mb-4">{error}</p>
         <Button asChild>
-          <Link href="/products">Back to Products</Link>
+          <Link href="/">Back to Products</Link>
         </Button>
       </div>
     );
@@ -142,7 +142,7 @@ export default function ProductDetailPage() {
       <header className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <Button asChild variant="ghost" className="gap-2">
-            <Link href="/products">
+            <Link href="/">
               <ArrowLeft className="w-4 h-4" />
               Back to Products
             </Link>
