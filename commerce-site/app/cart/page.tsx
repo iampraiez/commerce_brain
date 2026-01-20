@@ -24,6 +24,7 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const [showProcessing, setShowProcessing] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,11 @@ export default function CartPage() {
     // Generate random tax rate between 1.5% and 3.7%
     const randomTax = (Math.random() * (3.7 - 1.5) + 1.5) / 100;
     setTaxRate(randomTax);
+    
+    // Generate random delivery fee between $5 and $30
+    const randomDelivery = Math.floor(Math.random() * (30 - 5 + 1)) + 5;
+    setDeliveryFee(randomDelivery);
+    
     setIsLoading(false);
   }, []);
 
@@ -58,7 +64,7 @@ export default function CartPage() {
     0,
   );
   const taxAmount = subtotal * taxRate;
-  const total = subtotal + taxAmount;
+  const total = subtotal + taxAmount + deliveryFee;
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
@@ -75,6 +81,7 @@ export default function CartPage() {
           items,
           subtotal,
           taxAmount,
+          deliveryFee,
           total 
         }),
       });
@@ -249,7 +256,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span className="font-medium">Free</span>
+                      <span className="font-medium">${deliveryFee.toFixed(2)}</span>
                     </div>
                     <div className="border-t border-border pt-2 mt-2">
                       <div className="flex justify-between font-bold text-lg">

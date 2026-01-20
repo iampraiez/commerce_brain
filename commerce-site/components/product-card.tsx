@@ -16,6 +16,7 @@ interface ProductCardProps {
   image: string;
   description?: string;
   stock?: number;
+  viewMode?: "grid" | "list";
 }
 
 export function ProductCard({
@@ -25,6 +26,7 @@ export function ProductCard({
   image,
   description,
   stock,
+  viewMode = "grid",
 }: ProductCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -92,6 +94,74 @@ export function ProductCard({
     }
   };
 
+  if (viewMode === "list") {
+    return (
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow relative flex flex-row h-48 group">
+        {/* Wishlist Button - Top Right */}
+        {session?.user && (
+          <button
+            onClick={handleToggleWishlist}
+            disabled={isCheckingWishlist}
+            className="absolute top-3 right-3 z-10 p-2 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-all shadow-md disabled:opacity-50 opacity-0 group-hover:opacity-100"
+            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart
+              className={`w-5 h-5 transition-colors ${
+                isInWishlist
+                  ? "fill-accent text-accent"
+                  : "text-foreground hover:text-accent"
+              }`}
+            />
+          </button>
+        )}
+
+        <Link href={`/products/${id}`} className="w-48 shrink-0 relative bg-muted">
+          <Image
+            src={image || "/placeholder.svg"}
+            alt={name}
+            className="object-cover hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          />
+        </Link>
+
+        <div className="flex flex-col flex-1 p-6 justify-between">
+          <div>
+            <div className="flex justify-between items-start">
+              <Link href={`/products/${id}`}>
+                <h3 className="font-semibold text-xl hover:text-accent transition-colors truncate mb-2">
+                  {name}
+                </h3>
+              </Link>
+              <p className="text-xl font-bold text-accent">
+                ${price.toFixed(2)}
+              </p>
+            </div>
+            
+            {description && (
+              <p className="text-muted-foreground line-clamp-2 text-sm max-w-2xl">
+                {description}
+              </p>
+            )}
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              asChild
+              size="sm"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <Link href={`/products/${id}`}>
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                View Details
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow relative">
       {/* Wishlist Button - Top Right */}
@@ -107,7 +177,7 @@ export function ProductCard({
               isInWishlist
                 ? "fill-accent text-accent"
                 : "text-foreground hover:text-accent"
-            }`}
+              }`}
           />
         </button>
       )}

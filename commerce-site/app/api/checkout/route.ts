@@ -40,20 +40,31 @@ export async function POST(request: NextRequest) {
     const ordersCollection = db.collection("orders");
 
     // Create order in database with "paid" status (Demo Mode - No payment required)
+    
+    // Random success probability (75% success rate)
+    const isSuccess = Math.random() < 0.75;
+
+    if (!isSuccess) {
+      return NextResponse.json(
+        { message: "Payment failed. Please try again." },
+        { status: 400 }
+      );
+    }
+
     const orderResult = await ordersCollection.insertOne({
       userId: new ObjectId(session.user.id),
       userEmail: session.user.email,
       items,
       subtotal: subtotal || items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0),
       taxAmount: taxAmount || 0,
+      deliveryFee: body.deliveryFee || 0,
       total: total || items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0),
-      status: "paid", // Demo mode - instantly paid
+      status: "paid", 
       createdAt: new Date()
     });
 
     const orderId = orderResult.insertedId.toString();
 
-    // Return success immediately (no Stripe involved)
     return NextResponse.json(
       {
         orderId,

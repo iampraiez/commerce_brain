@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, AlertCircle } from "lucide-react";
+import { Heart, ArrowLeft, AlertCircle, LayoutGrid, List } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface Product {
@@ -26,6 +26,12 @@ export default function WishlistPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("viewMode") as "grid" | "list") || "grid";
+    }
+    return "grid";
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -111,9 +117,36 @@ export default function WishlistPage() {
               </Link>
             </Button>
           </div>
-          <div className="flex items-center gap-2">
-            <Heart className="w-6 h-6 text-accent fill-accent" />
-            <h1 className="text-3xl font-bold text-primary">My Wishlist</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Heart className="w-6 h-6 text-accent fill-accent" />
+              <h1 className="text-3xl font-bold text-primary">My Wishlist</h1>
+            </div>
+
+            <div className="flex items-center gap-2 bg-muted p-1 rounded-lg">
+              <Button
+                variant={viewMode === "grid" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("grid");
+                  localStorage.setItem("viewMode", "grid");
+                }}
+                className="h-8 w-8 p-0"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("list");
+                  localStorage.setItem("viewMode", "list");
+                }}
+                className="h-8 w-8 p-0"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -151,7 +184,11 @@ export default function WishlistPage() {
               {wishlistProducts.length} item
               {wishlistProducts.length !== 1 ? "s" : ""} in your wishlist
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={`grid gap-6 ${
+              viewMode === "grid" 
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" 
+                : "grid-cols-1"
+            }`}>
               {wishlistProducts.map((product) => (
                 <div key={product._id} className="relative">
                   <ProductCard
@@ -160,6 +197,7 @@ export default function WishlistPage() {
                     price={product.price}
                     image={product.image}
                     description={product.description}
+                    viewMode={viewMode}
                   />
                   <Button
                     onClick={() => removeFromWishlist(product._id)}

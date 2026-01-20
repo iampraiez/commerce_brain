@@ -23,6 +23,7 @@ function SearchBar() {
     if (paramsSearch !== searchQuery) {
       setSearchQuery(paramsSearch);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // Sync State to URL (handle typing)
@@ -39,7 +40,7 @@ function SearchBar() {
       params.delete("page"); // Reset page on new search
       router.push(`/?${params.toString()}`);
     }
-  }, [debouncedSearchQuery, router]);
+  }, [debouncedSearchQuery, router, searchParams]);
 
   const handleClear = () => {
     setSearchQuery("");

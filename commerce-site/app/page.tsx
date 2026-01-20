@@ -13,7 +13,7 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, LayoutGrid, List } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -64,6 +64,12 @@ function HomeContent() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("viewMode") as "grid" | "list") || "grid";
+    }
+    return "grid";
+  });
 
   // Use ref to track if we're currently fetching to prevent duplicate requests
   const isFetchingRef = useRef(false);
@@ -164,25 +170,52 @@ function HomeContent() {
       )}
 
       {/* Category Tabs */}
-      <div className="mb-8">
-        <h2 className="text-sm font-semibold text-muted-foreground mb-3">
-          Categories
-        </h2>
-        <div className="flex gap-2 flex-wrap">
-          {CATEGORIES.map((category) => (
-            <Button
-              key={category}
-              onClick={() => handleCategoryChange(category)}
-              variant={selectedCategory === category ? "default" : "outline"}
-              className={
-                selectedCategory === category
-                  ? "bg-primary text-primary-foreground"
-                  : ""
-              }
-            >
-              {category}
-            </Button>
-          ))}
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-muted-foreground mb-3">
+            Categories
+          </h2>
+          <div className="flex gap-2 flex-wrap">
+            {CATEGORIES.map((category) => (
+              <Button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                variant={selectedCategory === category ? "default" : "outline"}
+                className={
+                  selectedCategory === category
+                    ? "bg-primary text-primary-foreground"
+                    : ""
+                }
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 bg-muted p-1 rounded-lg self-start md:self-end">
+          <Button
+            variant={viewMode === "grid" ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => {
+              setViewMode("grid");
+              localStorage.setItem("viewMode", "grid");
+            }}
+            className="h-8 w-8 p-0"
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => {
+              setViewMode("list");
+              localStorage.setItem("viewMode", "list");
+            }}
+            className="h-8 w-8 p-0"
+          >
+            <List className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -200,7 +233,11 @@ function HomeContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className={`grid gap-6 mb-8 ${
+            viewMode === "grid" 
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" 
+              : "grid-cols-1"
+          }`}>
             {products.map((product) => (
               <ProductCard
                 key={product._id}
@@ -209,6 +246,7 @@ function HomeContent() {
                 price={product.price}
                 image={product.image}
                 description={product.description}
+                viewMode={viewMode}
               />
             ))}
           </div>
