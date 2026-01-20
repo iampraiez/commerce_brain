@@ -588,7 +588,8 @@ analytics.pageView('pricing_page', {
         <div className="max-w-5xl mx-auto flex justify-between items-center gap-8">
           <div>
             <p className="text-xs text-muted-foreground">
-              © 2026 Nexus • Modern Analytics, Built Simple
+              © {new Date().getFullYear()} Nexus • Modern Analytics, Built
+              Simple
             </p>
           </div>
           <div className="flex gap-6 items-center">
