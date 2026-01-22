@@ -88,7 +88,6 @@ export default function HomePage() {
         {/* Main Content - Split Layout */}
         <main className="flex-1 flex items-center justify-center px-6 pt-20 pb-12 w-full max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
-            
             {/* Left Column: Hero Text */}
             <div className="space-y-8 max-w-2xl">
               <div className="space-y-6">
@@ -117,7 +116,7 @@ export default function HomePage() {
                     variant="outline"
                     className="text-base px-8 h-12 bg-transparent"
                   >
-                   Explore Docs
+                    Explore Docs
                   </Button>
                 </Link>
               </div>
@@ -131,12 +130,17 @@ export default function HomePage() {
             </div>
 
             {/* Right Column: Feature Grid (Scrollable on mobile, fixed on desktop) */}
-            <div className="hidden lg:grid grid-cols-2 gap-4 h-[600px] overflow-y-auto pr-2 pb-2 scrollbar-hide mask-gradient">
+            <div className="hidden lg:grid grid-cols-2 gap-4 h-600px overflow-y-auto pr-2 pb-2 scrollbar-hide mask-gradient">
               {features.map((feature) => {
                 const Icon = feature.icon;
                 return (
-                  <Card key={feature.title} className="p-5 border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 group">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${feature.bg} group-hover:scale-110 transition-transform`}>
+                  <Card
+                    key={feature.title}
+                    className="p-5 border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 group"
+                  >
+                    <div
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${feature.bg} group-hover:scale-110 transition-transform`}
+                    >
                       <Icon className={`w-5 h-5 ${feature.color}`} />
                     </div>
                     <h3 className="text-base font-semibold text-foreground mb-2">
@@ -149,7 +153,6 @@ export default function HomePage() {
                 );
               })}
             </div>
-
           </div>
         </main>
 
@@ -158,7 +161,14 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto flex justify-between items-center gap-8">
             <div>
               <p className="text-xs text-muted-foreground">
-                © 2026 Nexus • Built by <a href="https://github.com/iampraiez" target="_blank" className="hover:text-primary transition">Praise Olaoye</a>
+                © 2026 Nexus • Built by{" "}
+                <a
+                  href="https://github.com/iampraiez"
+                  target="_blank"
+                  className="hover:text-primary transition"
+                >
+                  Praise Olaoye
+                </a>
               </p>
             </div>
             <div className="flex gap-6 items-center">
@@ -184,17 +194,17 @@ export default function HomePage() {
           </div>
         </footer>
       </div>
-      
+
       <style jsx global>{`
         .mask-gradient {
           mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
         }
         .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+          display: none;
         }
         .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>
