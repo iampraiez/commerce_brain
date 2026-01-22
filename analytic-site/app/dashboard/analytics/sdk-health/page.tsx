@@ -62,20 +62,20 @@ export default function SdkHealthPage() {
 
   const { metrics, healthData, versionStats, errorTypes } = data;
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">SDK Health</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">SDK Health</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Monitor SDK performance, delivery rates, and errors
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Calendar className="w-4 h-4" />
             Last 7 Days
           </Button>
-          <Button variant="outline" className="gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Filter className="w-4 h-4" />
             Filter
           </Button>
@@ -83,63 +83,67 @@ export default function SdkHealthPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Delivery Rate</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.deliveryRate}%</p>
-          <p className="text-xs text-green-600 mt-2">Target: 99.9%</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Delivery Rate</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.deliveryRate}%</p>
+          <p className="hidden md:block text-xs text-green-600 mt-2">Target: 99.9%</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Error Rate</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.errorRate}%</p>
-          <p className="text-xs text-green-600 mt-2">Healthy</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Error Rate</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.errorRate}%</p>
+          <p className="hidden md:block text-xs text-green-600 mt-2">Healthy</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Avg Latency</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.avgLatency}ms</p>
-          <p className="text-xs text-green-600 mt-2">Healthy</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Avg Latency</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.avgLatency}ms</p>
+          <p className="hidden md:block text-xs text-green-600 mt-2">Healthy</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">p95 Latency</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.p95Latency}ms</p>
-          <p className="text-xs text-green-600 mt-2">Healthy</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">p95 Latency</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.p95Latency}ms</p>
+          <p className="hidden md:block text-xs text-green-600 mt-2">Healthy</p>
         </Card>
       </div>
 
       {/* Delivery Rate */}
-      <Card className="p-6 border border-border bg-card">
-        <h2 className="text-xl font-semibold text-foreground mb-6">Delivery Rate & Latency</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={healthData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis dataKey="date" stroke="var(--color-muted-foreground)" />
-            <YAxis yAxisId="left" stroke="var(--color-muted-foreground)" />
-            <YAxis yAxisId="right" orientation="right" stroke="var(--color-muted-foreground)" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'var(--color-card)',
-                border: '1px solid var(--color-border)',
-              }}
-            />
-            <Legend />
-            <Line
-              yAxisId="left"
-              type="monotone"
-              dataKey="deliveryRate"
-              stroke="#10b981"
-              strokeWidth={2}
-              dot={{ fill: '#10b981' }}
-            />
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey="latency"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ fill: '#3b82f6' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <Card className="p-4 md:p-6 border border-border bg-card">
+        <h2 className="text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6">Delivery Rate & Latency</h2>
+        <div className="h-[300px] md:h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={healthData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="date" stroke="var(--color-muted-foreground)" fontSize={12} />
+              <YAxis yAxisId="left" stroke="var(--color-muted-foreground)" fontSize={12} />
+              <YAxis yAxisId="right" orientation="right" stroke="var(--color-muted-foreground)" fontSize={12} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--color-card)',
+                  border: '1px solid var(--color-border)',
+                }}
+              />
+              <Legend />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="deliveryRate"
+                stroke="#10b981"
+                strokeWidth={2}
+                dot={{ fill: '#10b981', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="latency"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ fill: '#3b82f6', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

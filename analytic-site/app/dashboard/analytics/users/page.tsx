@@ -62,20 +62,20 @@ export default function UsersPage() {
 
   const { metrics, userGrowth, deviceData, userSegments } = data;
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">User Analytics</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">User Analytics</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Understand user behavior and demographics
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Calendar className="w-4 h-4" />
             Last 7 Days
           </Button>
-          <Button variant="outline" className="gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Filter className="w-4 h-4" />
             Filter
           </Button>
@@ -83,104 +83,111 @@ export default function UsersPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Total Users</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.totalUsers.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-2">Across all projects</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Total Users</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.totalUsers.toLocaleString()}</p>
+          <p className="hidden md:block text-xs text-muted-foreground mt-2">Across all projects</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">New Users</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.newUsers.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-2">Last 7 days</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">New Users</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.newUsers.toLocaleString()}</p>
+          <p className="hidden md:block text-xs text-muted-foreground mt-2">Last 7 days</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Active Users (7d)</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.activeUsers.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-2">Last 7 days</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Active Users (7d)</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.activeUsers.toLocaleString()}</p>
+          <p className="hidden md:block text-xs text-muted-foreground mt-2">Last 7 days</p>
         </Card>
-        <Card className="p-4 border border-border bg-card">
-          <p className="text-muted-foreground text-sm mb-1">Returning Users</p>
-          <p className="text-3xl font-bold text-foreground">{metrics.returningUsers.toLocaleString()}</p>
-          <p className="text-xs text-blue-600 mt-2">{metrics.returningPercentage.toFixed(1)}% of active users</p>
+        <Card className="p-3 md:p-4 border border-border bg-card">
+          <p className="text-muted-foreground text-xs md:text-sm mb-1">Returning Users</p>
+          <p className="text-xl md:text-3xl font-bold text-foreground">{metrics.returningUsers.toLocaleString()}</p>
+          <p className="text-[10px] md:text-xs text-blue-600 mt-1 md:mt-2">{metrics.returningPercentage.toFixed(1)}% of active users</p>
         </Card>
       </div>
 
       {/* User Growth */}
-      <Card className="p-6 border border-border bg-card">
-        <h2 className="text-xl font-semibold text-foreground mb-6">User Growth</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={userGrowth}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis dataKey="date" stroke="var(--color-muted-foreground)" />
-            <YAxis stroke="var(--color-muted-foreground)" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'var(--color-card)',
-                border: '1px solid var(--color-border)',
-              }}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="activeUsers"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ fill: '#3b82f6' }}
-            />
-            <Line
-              type="monotone"
-              dataKey="newUsers"
-              stroke="#10b981"
-              strokeWidth={2}
-              dot={{ fill: '#10b981' }}
-            />
-            <Line
-              type="monotone"
-              dataKey="returning"
-              stroke="#f59e0b"
-              strokeWidth={2}
-              dot={{ fill: '#f59e0b' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Device Breakdown */}
-        <Card className="p-6 border border-border bg-card">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Device Breakdown</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={deviceData}>
+      <Card className="p-4 md:p-6 border border-border bg-card">
+        <h2 className="text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6">User Growth</h2>
+        <div className="h-[300px] md:h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={userGrowth}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis dataKey="device" stroke="var(--color-muted-foreground)" />
-              <YAxis stroke="var(--color-muted-foreground)" />
+              <XAxis dataKey="date" stroke="var(--color-muted-foreground)" fontSize={12} />
+              <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'var(--color-card)',
                   border: '1px solid var(--color-border)',
                 }}
               />
-              <Bar dataKey="users" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="activeUsers"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ fill: '#3b82f6', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="newUsers"
+                stroke="#10b981"
+                strokeWidth={2}
+                dot={{ fill: '#10b981', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="returning"
+                stroke="#f59e0b"
+                strokeWidth={2}
+                dot={{ fill: '#f59e0b', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Device Breakdown */}
+        <Card className="p-4 md:p-6 border border-border bg-card">
+          <h2 className="text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6">Device Breakdown</h2>
+          <div className="h-[250px] md:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={deviceData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="device" stroke="var(--color-muted-foreground)" fontSize={12} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                />
+                <Bar dataKey="users" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </Card>
 
         {/* Cohort Analysis Preview */}
-        <Card className="p-6 border border-border bg-card">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Cohort Analysis</h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded">
-              <span className="text-sm font-medium">Week of Jan 1</span>
-              <span className="text-sm font-bold">245 users</span>
+        <Card className="p-4 md:p-6 border border-border bg-card">
+          <h2 className="text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6">Cohort Analysis</h2>
+          <div className="space-y-2 md:space-y-3">
+            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
+              <span className="text-xs md:text-sm font-medium">Week of Jan 1</span>
+              <span className="text-xs md:text-sm font-bold">245 users</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded">
-              <span className="text-sm font-medium">Week of Jan 8</span>
-              <span className="text-sm font-bold">187 users</span>
+            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
+              <span className="text-xs md:text-sm font-medium">Week of Jan 8</span>
+              <span className="text-xs md:text-sm font-bold">187 users</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded">
-              <span className="text-sm font-medium">Week of Jan 15</span>
-              <span className="text-sm font-bold">156 users</span>
+            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
+              <span className="text-xs md:text-sm font-medium">Week of Jan 15</span>
+              <span className="text-xs md:text-sm font-bold">156 users</span>
             </div>
           </div>
         </Card>

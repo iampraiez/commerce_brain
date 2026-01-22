@@ -55,20 +55,20 @@ export default function RetentionPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Retention Analysis</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Retention Analysis</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Monitor user retention metrics and cohort behavior
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Calendar className="w-4 h-4" />
             Last 30 Days
           </Button>
-          <Button variant="outline" className="gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Filter className="w-4 h-4" />
             Filter
           </Button>
@@ -76,12 +76,12 @@ export default function RetentionPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
         {keyMetrics.map((metric: any) => (
-          <Card key={metric.label} className="p-4 border border-border bg-card">
-            <p className="text-muted-foreground text-sm mb-1">{metric.label}</p>
-            <p className="text-3xl font-bold text-foreground">{metric.value}</p>
-            <p className="text-xs text-muted-foreground mt-2">{metric.description}</p>
+          <Card key={metric.label} className="p-3 md:p-4 border border-border bg-card">
+            <p className="text-muted-foreground text-xs md:text-sm mb-1">{metric.label}</p>
+            <p className="text-xl md:text-3xl font-bold text-foreground">{metric.value}</p>
+            <p className="hidden md:block text-xs text-muted-foreground mt-2">{metric.description}</p>
           </Card>
         ))}
       </div>

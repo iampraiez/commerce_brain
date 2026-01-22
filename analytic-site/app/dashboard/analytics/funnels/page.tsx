@@ -51,20 +51,20 @@ export default function FunnelsPage() {
   const { funnelName, totalUsers, overallConversion, steps } = data;
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Conversion Funnels</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Conversion Funnels</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Analyze user conversion funnels and identify drop-off points
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Calendar className="w-4 h-4" />
             Last 30 Days
           </Button>
-          <Button variant="outline" className="gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2 bg-transparent">
             <Filter className="w-4 h-4" />
             Filter
           </Button>
@@ -72,21 +72,21 @@ export default function FunnelsPage() {
       </div>
 
       {/* Summary Card */}
-      <Card className="p-6 border border-border bg-card">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <Card className="p-4 md:p-6 border border-border bg-card">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           <div>
-            <p className="text-muted-foreground text-sm mb-1">Funnel Name</p>
-            <p className="text-2xl font-bold text-foreground">{funnelName}</p>
+            <p className="text-muted-foreground text-xs md:text-sm mb-1">Funnel Name</p>
+            <p className="text-lg md:text-2xl font-bold text-foreground">{funnelName}</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-sm mb-1">Overall Conversion</p>
-            <p className="text-2xl font-bold text-foreground">{overallConversion.toFixed(1)}%</p>
-            <p className="text-xs text-muted-foreground mt-1">Across all projects</p>
+            <p className="text-muted-foreground text-xs md:text-sm mb-1">Overall Conversion</p>
+            <p className="text-lg md:text-2xl font-bold text-foreground">{overallConversion.toFixed(1)}%</p>
+            <p className="hidden md:block text-xs text-muted-foreground mt-1">Across all projects</p>
           </div>
-          <div>
-            <p className="text-muted-foreground text-sm mb-1">Total Users</p>
-            <p className="text-2xl font-bold text-foreground">{totalUsers.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Unique users in funnel</p>
+          <div className="col-span-2 md:col-span-1">
+            <p className="text-muted-foreground text-xs md:text-sm mb-1">Total Users</p>
+            <p className="text-lg md:text-2xl font-bold text-foreground">{totalUsers.toLocaleString()}</p>
+            <p className="hidden md:block text-xs text-muted-foreground mt-1">Unique users in funnel</p>
           </div>
         </div>
       </Card>
