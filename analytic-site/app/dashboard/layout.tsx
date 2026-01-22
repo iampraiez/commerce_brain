@@ -136,14 +136,14 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 border-r border-border bg-card transform transition-transform lg:translate-x-0 z-[60] ${
+        className={`fixed inset-y-0 left-0 w-64 border-r border-border bg-card transform transition-transform lg:translate-x-0 z-60 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="p-6">
           <Link href="/dashboard" className="flex items-center gap-2 mb-8">
             <Activity className="w-5 h-5 text-primary" />
-            <span className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="font-bold text-lg bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
               Nexus
             </span>
           </Link>
@@ -222,7 +222,7 @@ export default function DashboardLayout({
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[55] lg:hidden"
+          className="fixed inset-0 bg-black/50 z-55 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

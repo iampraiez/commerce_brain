@@ -4,16 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Code,
-  FileText,
   Github,
   Globe,
   CheckCircle2,
   AlertCircle,
-  BookOpen,
   Activity,
 } from "lucide-react";
 import { CopyableCode } from "@/components/copyable-code";
-import { MinimalBackground } from "@/components/minimal-background";
 
 export default function PublicDocsPage() {
   return (
@@ -50,7 +47,7 @@ export default function PublicDocsPage() {
           {/* Hero Section */}
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-light text-foreground leading-relaxed flex items-center gap-3">
-              <Activity className="w-10 h-10 text-primary flex-shrink-0" />
+              <Activity className="w-10 h-10 text-primary shrink-0" />
               Nexus{" "}
               <span className="text-primary font-semibold">Analytics</span>
             </h1>
@@ -76,7 +73,7 @@ export default function PublicDocsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Real-time Data
@@ -91,7 +88,7 @@ export default function PublicDocsPage() {
               </div>
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Reliable at Scale
@@ -105,7 +102,7 @@ export default function PublicDocsPage() {
               </div>
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Privacy First
@@ -119,7 +116,7 @@ export default function PublicDocsPage() {
               </div>
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Developer Friendly
@@ -296,7 +293,7 @@ Nexus.track('order_created', {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <Globe className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <Globe className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Browser Environment
@@ -311,7 +308,7 @@ Nexus.track('order_created', {
               </div>
               <div className="p-6 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-4">
-                  <Code className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  <Code className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">
                       Node.js Environment
@@ -477,7 +474,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Use Consistent Event Names
                   </h4>
@@ -490,7 +487,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
 
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Initialize Once
                   </h4>
@@ -503,7 +500,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
 
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Include Contextual Data
                   </h4>
@@ -516,7 +513,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
 
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Don&apos;t Track Sensitive Data
                   </h4>
@@ -529,7 +526,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
 
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Flush Before Unload
                   </h4>
@@ -542,7 +539,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
 
               <div className="border border-border/50 rounded-lg p-6 bg-card/30 backdrop-blur">
                 <div className="flex items-start gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <h4 className="font-semibold text-foreground">
                     Use TypeScript
                   </h4>
@@ -647,7 +644,7 @@ Nexus.track('product_viewed', { productId: '2' });`}
           {/* Support */}
           <div className="p-8 rounded-lg border border-border/50 bg-card/30 backdrop-blur">
             <div className="flex items-start gap-4">
-              <AlertCircle className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+              <AlertCircle className="w-6 h-6 text-primary shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-foreground mb-2">
                   Need Help?

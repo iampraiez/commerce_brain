@@ -43,7 +43,7 @@ export function SdkInstallCard() {
       {/* Install Command Box */}
       <div className="bg-secondary rounded-lg p-4 font-mono text-sm text-primary flex items-center justify-between border border-border/30">
         <code className="overflow-x-auto flex-1">{installCommand}</code>
-        <div className="flex gap-2 items-center ml-4 flex-shrink-0">
+        <div className="flex gap-2 items-center ml-4 shrink-0">
           {/* Package Manager Dropdown */}
           <div className="relative">
             <button
@@ -55,7 +55,7 @@ export function SdkInstallCard() {
               <ChevronDown className="w-3 h-3" />
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-card border border-border/50 rounded-lg shadow-lg z-50 min-w-[100px]">
+              <div className="absolute right-0 top-full mt-1 bg-card border border-border/50 rounded-lg shadow-lg z-50 min-w-25">
                 {PACKAGE_MANAGERS.map((pm) => (
                   <button
                     key={pm}
