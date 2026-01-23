@@ -308,19 +308,19 @@ export default function ProjectsPage() {
     <div className="space-y-6 md:space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Projects</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Projects
+          </h1>
           <p className="text-muted-foreground text-sm md:text-base">
             Create and manage API projects for event tracking
           </p>
         </div>
-        
+
         <Dialog open={showNewProject} onOpenChange={setShowNewProject}>
           <DialogTrigger asChild>
-            <Button className="gap-2 w-fit sm:w-auto">
-              New Project
-            </Button>
+            <Button className="gap-2 w-fit sm:w-auto">New Project</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Create New Project</DialogTitle>
               <DialogDescription>
@@ -353,8 +353,16 @@ export default function ProjectsPage() {
                 </Select>
               </div>
               <DialogFooter className="pt-4">
-                <Button type="submit" disabled={loading} className="w-full sm:w-auto">
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Project'}
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full sm:w-auto"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Create Project"
+                  )}
                 </Button>
               </DialogFooter>
             </form>
@@ -367,22 +375,26 @@ export default function ProjectsPage() {
         <div className="lg:col-span-1 space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search projects..." 
+            <Input
+              placeholder="Search projects..."
               className="pl-9 bg-card border-border"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
+
           <Card className="border border-border bg-card overflow-hidden">
             <div className="p-4 border-b border-border bg-secondary/30">
-              <h2 className="font-semibold text-foreground text-sm uppercase tracking-wider">Your Projects</h2>
+              <h2 className="font-semibold text-foreground text-sm uppercase tracking-wider">
+                Your Projects
+              </h2>
             </div>
-            <div className="max-h-[400px] overflow-y-auto divide-y divide-border custom-scrollbar">
+            <div className="max-h-100 overflow-y-auto divide-y divide-border custom-scrollbar">
               {filteredProjects.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground text-sm">
-                  {searchQuery ? "No projects match your search." : "No projects yet. Create one to get started."}
+                  {searchQuery
+                    ? "No projects match your search."
+                    : "No projects yet. Create one to get started."}
                 </div>
               ) : (
                 filteredProjects.map((project) => (
@@ -395,19 +407,23 @@ export default function ProjectsPage() {
                     }}
                     className={`w-full p-4 text-left transition-all group ${
                       selectedProject?._id === project._id
-                        ? 'bg-primary/10 border-l-4 border-primary'
-                        : 'hover:bg-secondary/50 border-l-4 border-transparent'
+                        ? "bg-primary/10 border-l-4 border-primary"
+                        : "hover:bg-secondary/50 border-l-4 border-transparent"
                     }`}
                   >
                     <div className="flex justify-between items-center">
                       <div className="font-medium text-foreground group-hover:text-primary transition-colors">
                         {project.name}
                       </div>
-                      <div className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                        project.environment === 'production' ? 'border-green-500/30 bg-green-500/10 text-green-500' :
-                        project.environment === 'staging' ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500' :
-                        'border-blue-500/30 bg-blue-500/10 text-blue-500'
-                      }`}>
+                      <div
+                        className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                          project.environment === "production"
+                            ? "border-green-500/30 bg-green-500/10 text-green-500"
+                            : project.environment === "staging"
+                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-500"
+                              : "border-blue-500/30 bg-blue-500/10 text-blue-500"
+                        }`}
+                      >
                         {project.environment}
                       </div>
                     </div>
@@ -429,7 +445,7 @@ export default function ProjectsPage() {
                 <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
                   <Activity className="w-24 h-24" />
                 </div>
-                
+
                 <div className="flex justify-between items-start relative z-10">
                   <div>
                     <div className="flex items-center gap-3 mb-1">
@@ -439,26 +455,38 @@ export default function ProjectsPage() {
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <div className={`w-2 h-2 rounded-full ${
-                          selectedProject.environment === 'production' ? 'bg-green-500' :
-                          selectedProject.environment === 'staging' ? 'bg-yellow-500' : 'bg-blue-500'
-                        }`} />
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            selectedProject.environment === "production"
+                              ? "bg-green-500"
+                              : selectedProject.environment === "staging"
+                                ? "bg-yellow-500"
+                                : "bg-blue-500"
+                          }`}
+                        />
                         {selectedProject.environment}
                       </span>
                       <span>•</span>
                       <span>ID: {selectedProject._id}</span>
                     </div>
                   </div>
-                  
-                  <Dialog open={showSettings} onOpenChange={(open) => {
-                    if (open) {
-                      setEditName(selectedProject.name);
-                      setEditEnv(selectedProject.environment);
-                    }
-                    setShowSettings(open);
-                  }}>
+
+                  <Dialog
+                    open={showSettings}
+                    onOpenChange={(open) => {
+                      if (open) {
+                        setEditName(selectedProject.name);
+                        setEditEnv(selectedProject.environment);
+                      }
+                      setShowSettings(open);
+                    }}
+                  >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-xl">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="rounded-xl"
+                      >
                         <Settings className="w-4 h-4" />
                       </Button>
                     </DialogTrigger>
@@ -472,8 +500,8 @@ export default function ProjectsPage() {
                       <div className="space-y-4 py-4">
                         <div className="space-y-2">
                           <Label>Project Name</Label>
-                          <Input 
-                            value={editName} 
+                          <Input
+                            value={editName}
                             onChange={(e) => setEditName(e.target.value)}
                           />
                         </div>
@@ -484,40 +512,62 @@ export default function ProjectsPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="production">Production</SelectItem>
+                              <SelectItem value="production">
+                                Production
+                              </SelectItem>
                               <SelectItem value="staging">Staging</SelectItem>
-                              <SelectItem value="development">Development</SelectItem>
+                              <SelectItem value="development">
+                                Development
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                       </div>
                       <div className="flex flex-col gap-4">
-                        <Button onClick={handleUpdateProject} disabled={loading}>
-                          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+                        <Button
+                          onClick={handleUpdateProject}
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Save Changes"
+                          )}
                         </Button>
-                        
+
                         <div className="pt-4 border-t border-border">
                           <p className="text-xs text-muted-foreground mb-3">
-                            Danger Zone: Deleting a project will permanently remove all associated API keys and data.
+                            Danger Zone: Deleting a project will permanently
+                            remove all associated API keys and data.
                           </p>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="destructive" className="w-full gap-2">
+                              <Button
+                                variant="destructive"
+                                className="w-full gap-2"
+                              >
                                 <Trash2 className="w-4 h-4" />
                                 Delete Project
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete the
-                                  project <strong>{selectedProject.name}</strong> and all of its API keys.
+                                  This action cannot be undone. This will
+                                  permanently delete the project{" "}
+                                  <strong>{selectedProject.name}</strong> and
+                                  all of its API keys.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDeleteProject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                <AlertDialogAction
+                                  onClick={handleDeleteProject}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
                                   Delete Project
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -559,18 +609,23 @@ export default function ProjectsPage() {
                       New API Key Generated
                     </div>
                     <p className="text-xs text-muted-foreground mb-4">
-                      Copy this key now. For security reasons, it will not be shown again.
+                      Copy this key now. For security reasons, it will not be
+                      shown again.
                     </p>
                     <div className="flex gap-2">
                       <div className="flex-1 bg-background border border-primary/30 rounded-lg p-3 font-mono text-sm text-primary break-all">
                         {newlyGeneratedKey}
                       </div>
-                      <Button 
-                        size="icon" 
+                      <Button
+                        size="icon"
                         className="h-auto px-4"
-                        onClick={() => handleCopy(newlyGeneratedKey, 'new')}
+                        onClick={() => handleCopy(newlyGeneratedKey, "new")}
                       >
-                        {copiedKeyId === 'new' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copiedKeyId === "new" ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -592,14 +647,18 @@ export default function ProjectsPage() {
                           <div className="font-mono text-sm text-foreground flex items-center gap-2">
                             {key.displayKey}
                             {key.isActive && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-green-500" title="Active" />
+                              <span
+                                className="w-1.5 h-1.5 rounded-full bg-green-500"
+                                title="Active"
+                              />
                             )}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
-                            Created on {new Date(key.createdAt).toLocaleDateString()}
+                            Created on{" "}
+                            {new Date(key.createdAt).toLocaleDateString()}
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-2 self-end md:self-auto">
                           <Button
                             variant="outline"
@@ -607,10 +666,14 @@ export default function ProjectsPage() {
                             className="gap-2 h-8"
                             onClick={() => handleCopy(key.displayKey, key._id)}
                           >
-                            {copiedKeyId === key._id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                            {copiedKeyId === key._id ? (
+                              <Check className="w-3 h-3" />
+                            ) : (
+                              <Copy className="w-3 h-3" />
+                            )}
                             <span className="hidden sm:inline">Copy</span>
                           </Button>
-                          
+
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -624,14 +687,21 @@ export default function ProjectsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Revoke API Key?</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Revoke API Key?
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  This will immediately disable this API key. Any applications using this key will no longer be able to track events.
+                                  This will immediately disable this API key.
+                                  Any applications using this key will no longer
+                                  be able to track events.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleRevokeApiKey(key._id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                <AlertDialogAction
+                                  onClick={() => handleRevokeApiKey(key._id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
                                   Revoke Key
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -650,9 +720,19 @@ export default function ProjectsPage() {
                   <ExternalLink className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-foreground">Integration Guide</h4>
+                  <h4 className="text-sm font-semibold text-foreground">
+                    Integration Guide
+                  </h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    Ready to start tracking? Check out our <Link href="/docs" className="text-primary hover:underline font-medium">SDK Documentation</Link> to learn how to initialize the Nexus SDK with your project credentials.
+                    Ready to start tracking? Check out our{" "}
+                    <Link
+                      href="/docs"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      SDK Documentation
+                    </Link>{" "}
+                    to learn how to initialize the Nexus SDK with your project
+                    credentials.
                   </p>
                 </div>
               </div>
@@ -663,12 +743,19 @@ export default function ProjectsPage() {
                 <BarChart3 className="w-12 h-12 text-muted-foreground opacity-20" />
               </div>
               <div className="max-w-xs">
-                <h3 className="text-lg font-semibold text-foreground">No Project Selected</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  No Project Selected
+                </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Select a project from the list on the left or create a new one to manage your API keys and settings.
+                  Select a project from the list on the left or create a new one
+                  to manage your API keys and settings.
                 </p>
               </div>
-              <Button onClick={() => setShowNewProject(true)} variant="outline" className="mt-4">
+              <Button
+                onClick={() => setShowNewProject(true)}
+                variant="outline"
+                className="mt-4"
+              >
                 Create Your First Project
               </Button>
             </Card>

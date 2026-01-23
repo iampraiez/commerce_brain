@@ -234,14 +234,14 @@ export default function AlertsPage() {
             setShowForm(!showForm);
             setEditingAlert(null);
           }}
-          className="gap-2 w-full md:w-auto"
+          className="gap-2 w-fit sm:w-auto"
         >
           Create Alert
         </Button>
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>
               {editingAlert ? "Edit Alert" : "Create New Alert"}

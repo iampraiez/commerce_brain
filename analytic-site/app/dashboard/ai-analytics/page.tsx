@@ -114,8 +114,8 @@ export default function AIAnalyticsPage() {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row gap-6 overflow-hidden">
       {/* Sidebar / History */}
-      <div className="w-full md:w-80 flex-shrink-0 flex flex-col gap-4 overflow-hidden">
-        <div className="flex-shrink-0">
+      <div className="w-full md:w-80 shrink-0 flex flex-col gap-4 overflow-hidden">
+        <div className="shrink-0">
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-primary" />
             AI Insights
@@ -148,13 +148,19 @@ export default function AIAnalyticsPage() {
                   onClick={() => setCurrentReport(report)}
                   className={`w-full text-left p-3 rounded-lg text-sm transition-colors border ${
                     currentReport?._id === report._id
-                      ? 'bg-primary/10 border-primary/20 text-foreground'
-                      : 'hover:bg-secondary/50 border-transparent text-muted-foreground'
+                      ? "bg-primary/10 border-primary/20 text-foreground"
+                      : "hover:bg-secondary/50 border-transparent text-muted-foreground"
                   }`}
                 >
-                  <div className="font-medium capitalize">{report.period} Report</div>
+                  <div className="font-medium capitalize">
+                    {report.period} Report
+                  </div>
                   <div className="text-xs opacity-70 mt-1">
-                    {new Date(report.generatedAt).toLocaleDateString()} • {new Date(report.generatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    {new Date(report.generatedAt).toLocaleDateString()} •{" "}
+                    {new Date(report.generatedAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </button>
               ))
@@ -166,14 +172,14 @@ export default function AIAnalyticsPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col gap-6 overflow-hidden min-h-0">
         {/* Controls */}
-        <Card className="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between border-border bg-card flex-shrink-0">
+        <Card className="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between border-border bg-card shrink-0">
           <div className="flex items-center gap-4 w-full sm:w-auto">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Calendar className="w-4 h-4" />
               Period:
             </div>
             <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-35">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -183,11 +189,11 @@ export default function AIAnalyticsPage() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="flex gap-2 w-full sm:w-auto">
-            <Button 
-              onClick={handleGenerate} 
-              disabled={generating} 
+            <Button
+              onClick={handleGenerate}
+              disabled={generating}
               className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90 text-primary-foreground border-0 shadow-sm"
             >
               {generating ? (
@@ -212,14 +218,22 @@ export default function AIAnalyticsPage() {
               <div className="p-4 border-b border-border flex justify-between items-center bg-secondary/5">
                 <div>
                   <h2 className="font-semibold text-lg">
-                    {currentReport.period.charAt(0).toUpperCase() + currentReport.period.slice(1)} Analysis
+                    {currentReport.period.charAt(0).toUpperCase() +
+                      currentReport.period.slice(1)}{" "}
+                    Analysis
                   </h2>
                   <p className="text-xs text-muted-foreground">
-                    Generated on {new Date(currentReport.generatedAt).toLocaleString()}
+                    Generated on{" "}
+                    {new Date(currentReport.generatedAt).toLocaleString()}
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownload}
+                    className="gap-2"
+                  >
                     <Download className="w-4 h-4" />
                     <span className="hidden sm:inline">Download</span>
                   </Button>
@@ -240,9 +254,12 @@ export default function AIAnalyticsPage() {
               <div className="w-16 h-16 rounded-2xl bg-secondary/50 flex items-center justify-center mb-4">
                 <FileText className="w-8 h-8 opacity-50" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No Report Selected</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">
+                No Report Selected
+              </h3>
               <p className="text-center max-w-sm">
-                Select a report from the history or generate a new one to get AI-powered insights about your data.
+                Select a report from the history or generate a new one to get
+                AI-powered insights about your data.
               </p>
             </div>
           )}

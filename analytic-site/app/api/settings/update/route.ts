@@ -6,7 +6,7 @@ import { createSuccessResponse, createErrorResponse } from '@/lib/api-response';
 
 export async function PATCH(request: NextRequest) {
   try {
-    const company = await getSessionCompany(request);
+    const company = await getSessionCompany();
     if (!company) {
       return createErrorResponse('Unauthorized', 401);
     }

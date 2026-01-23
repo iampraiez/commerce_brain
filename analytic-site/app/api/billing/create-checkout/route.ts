@@ -42,6 +42,11 @@ export async function POST(request: NextRequest) {
     }
 
     // For pro plan, create checkout session
+    if (!planConfig.priceId) {
+      console.error('Stripe Price ID is missing for plan:', plan);
+      return createErrorResponse('Billing configuration error. Please contact support.', 500);
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: company.stripeCustomerId || undefined,
       customer_email: company.stripeCustomerId ? undefined : company.email,

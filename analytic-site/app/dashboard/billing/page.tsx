@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, AlertTriangle, Zap } from 'lucide-react';
 import { Suspense } from 'react';
 import Loading from './loading';
+import { useDashboard } from '../dashboard-context';
 
 const plans = [
   {
@@ -16,9 +17,9 @@ const plans = [
     description: 'Perfect for getting started',
     features: [
       '10,000 events/month',
+      '3 API Projects',
       'Basic analytics',
-      'Limited retention',
-      'Community support',
+      '1 Day Data Retention',
     ],
   },
   {
@@ -28,43 +29,34 @@ const plans = [
     description: 'For growing teams',
     features: [
       'Unlimited events',
+      'Unlimited Projects',
       'Advanced analytics',
       'Full retention',
       'Email alerts',
       'Priority support',
-      'Custom integrations',
     ],
   },
 ];
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
+  const { usage, company, loading: contextLoading } = useDashboard();
   const [currentPlan, setCurrentPlan] = useState<string>('free');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const loadCurrentPlan = useCallback(async () => {
-    try {
-      const response = await fetch('/api/billing/subscription');
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentPlan(data.data?.plan || 'free');
-      }
-    } catch (error) {
-      console.error('Error loading plan:', error);
-    }
-  }, []);
-
   useEffect(() => {
+    if (company) {
+      setCurrentPlan(company.plan || 'free');
+    }
+    
     // Check if returning from Stripe checkout
     const sessionId = searchParams.get('session');
     if (sessionId) {
       setMessage('Payment successful! Your subscription has been activated.');
       setTimeout(() => setMessage(''), 5000);
     }
-
-    loadCurrentPlan();
-  }, [searchParams, loadCurrentPlan]);
+  }, [company, searchParams]);
 
   async function handleUpgrade(plan: string) {
     if (plan === currentPlan) return;
@@ -98,6 +90,10 @@ export default function BillingPage() {
     }
   }
 
+  if (contextLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="space-y-8">
       <Suspense fallback={<Loading />}>
@@ -114,18 +110,41 @@ export default function BillingPage() {
           </Card>
         )}
 
+        {/* Free Tier Exceeded Warning */}
+        {usage.isFreeTierExceeded && (
+          <Card className="p-4 border border-destructive/20 bg-destructive/10 flex items-start gap-4">
+            <AlertTriangle className="w-5 h-5 text-destructive mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-destructive">Free Tier Limit Exceeded</h3>
+              <p className="text-sm text-destructive/80 mt-1">
+                You have exceeded the 10,000 events limit for the Free tier. 
+                Data ingestion is currently paused. Please upgrade to Pro to resume tracking.
+              </p>
+            </div>
+          </Card>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {plans.map((plan) => {
             const isCurrent = plan.id === currentPlan;
             return (
               <Card
                 key={plan.id}
-                className={`p-6 border ${
-                  isCurrent ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                className={`p-6 border relative overflow-hidden transition-all ${
+                  isCurrent ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' : 'border-border bg-card hover:border-primary/50'
                 }`}
               >
+                {isCurrent && (
+                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
+                    CURRENT PLAN
+                  </div>
+                )}
+                
                 <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-foreground">{plan.name}</h2>
+                  <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                    {plan.name}
+                    {plan.id === 'pro' && <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />}
+                  </h2>
                   <p className="text-muted-foreground text-sm">{plan.description}</p>
                 </div>
 
@@ -138,23 +157,23 @@ export default function BillingPage() {
 
                 <Button
                   className="w-full mb-6"
-                  variant={isCurrent ? 'default' : 'outline'}
+                  variant={isCurrent ? 'outline' : 'default'}
                   onClick={() => handleUpgrade(plan.id)}
-                  disabled={loading}
+                  disabled={loading || isCurrent}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : isCurrent ? (
-                    'Current Plan'
+                    'Active'
                   ) : (
-                    'Upgrade'
+                    `Upgrade to ${plan.name}`
                   )}
                 </Button>
 
                 <div className="space-y-3">
                   {plan.features.map((feature) => (
                     <div key={feature} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary" />
+                      <Check className="w-4 h-4 text-primary" />
                       <span className="text-foreground text-sm">{feature}</span>
                     </div>
                   ))}
@@ -167,31 +186,57 @@ export default function BillingPage() {
         {/* Usage Information */}
         <Card className="p-6 border border-border bg-card">
           <h2 className="text-xl font-semibold text-foreground mb-6">Current Usage</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <p className="text-muted-foreground text-sm mb-1">Events This Month</p>
-              <p className="text-3xl font-bold text-foreground">0</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {currentPlan === 'free'
-                  ? 'of 10,000 allowed'
-                  : 'Unlimited'}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Events Usage */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-end">
+                <p className="text-sm font-medium text-muted-foreground">Monthly Events</p>
+                <p className="text-sm font-medium text-foreground">
+                  {usage.eventsCount.toLocaleString()} / {currentPlan === 'free' ? '10,000' : 'Unlimited'}
+                </p>
+              </div>
+              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                <div 
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    usage.isFreeTierExceeded ? 'bg-destructive' : 'bg-primary'
+                  }`}
+                  style={{ 
+                    width: currentPlan === 'free' 
+                      ? `${Math.min((usage.eventsCount / 10000) * 100, 100)}%` 
+                      : '100%' 
+                  }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {usage.isFreeTierExceeded 
+                  ? 'Limit exceeded. Upgrade to continue tracking.' 
+                  : 'Resets on the 1st of next month.'}
               </p>
             </div>
-            <div>
-              <p className="text-muted-foreground text-sm mb-1">Storage Used</p>
-              <p className="text-3xl font-bold text-foreground">0 GB</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {currentPlan === 'free'
-                  ? 'of 5 GB limit'
-                  : 'Unlimited'}
+
+            {/* Projects Usage */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-end">
+                <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
+                <p className="text-sm font-medium text-foreground">
+                  {usage.projectsCount} / {currentPlan === 'free' ? '3' : 'Unlimited'}
+                </p>
+              </div>
+              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                  style={{ 
+                    width: currentPlan === 'free' 
+                      ? `${Math.min((usage.projectsCount / 3) * 100, 100)}%` 
+                      : `${Math.min((usage.projectsCount / 10) * 100, 100)}%` // Visual filler for pro
+                  }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {currentPlan === 'free' && usage.projectsCount >= 3
+                  ? 'Project limit reached.'
+                  : 'Create more projects to organize your data.'}
               </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground text-sm mb-1">Retention</p>
-              <p className="text-3xl font-bold text-foreground">
-                {currentPlan === 'free' ? '30' : '365'}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">days</p>
             </div>
           </div>
         </Card>

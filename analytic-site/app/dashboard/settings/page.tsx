@@ -243,10 +243,10 @@ export default function SettingsPage() {
       {/* Tabs */}
       <div className="flex gap-2 border-b border-border overflow-x-auto">
         {[
-          { id: 'general', label: 'General', icon: Settings },
-          { id: 'team', label: 'Team', icon: Users },
-          { id: 'security', label: 'Security', icon: Shield },
-          { id: 'email', label: 'Notifications', icon: Mail },
+          { id: "general", label: "General", icon: Settings },
+          { id: "team", label: "Team", icon: Users },
+          { id: "security", label: "Security", icon: Shield },
+          { id: "email", label: "Notifications", icon: Mail },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -255,8 +255,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-primary text-foreground font-medium'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? "border-primary text-foreground font-medium"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -267,11 +267,13 @@ export default function SettingsPage() {
       </div>
 
       {/* General Settings */}
-      {activeTab === 'general' && (
+      {activeTab === "general" && (
         <div className="space-y-6 max-w-2xl">
           <Card className="p-6 border border-border bg-card space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-foreground mb-4">Workspace Information</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                Workspace Information
+              </h2>
               <div className="grid gap-4">
                 <div>
                   <Label htmlFor="companyName">Workspace Name</Label>
@@ -291,44 +293,60 @@ export default function SettingsPage() {
                     className="mt-1.5"
                     disabled
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Contact support to change your email</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Contact support to change your email
+                  </p>
                 </div>
               </div>
             </div>
             <div className="flex justify-end">
-              <Button 
-                onClick={handleSaveGeneral} 
-                disabled={saving}
-              >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                {saving ? 'Saving...' : 'Save Changes'}
+              <Button onClick={handleSaveGeneral} disabled={saving}>
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : null}
+                {saving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </Card>
 
           <Card className="p-6 border border-border bg-card">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Data Export</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">
+              Data Export
+            </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Download a complete archive of your workspace data including events, users, and configuration.
+              Download a complete archive of your workspace data including
+              events, users, and configuration.
             </p>
-            <Button variant="outline" onClick={handleExportData} disabled={exporting} className="gap-2 w-full sm:w-auto">
-              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {exporting ? 'Exporting...' : 'Export All Data (JSON)'}
+            <Button
+              variant="outline"
+              onClick={handleExportData}
+              disabled={exporting}
+              className="gap-2 w-full sm:w-auto"
+            >
+              {exporting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              {exporting ? "Exporting..." : "Export All Data (JSON)"}
             </Button>
           </Card>
         </div>
       )}
 
       {/* Team Settings */}
-      {activeTab === 'team' && (
+      {activeTab === "team" && (
         <Card className="p-12 border border-border bg-card flex flex-col items-center justify-center text-center space-y-4 max-w-2xl">
           <div className="p-4 rounded-full bg-secondary/50">
             <Users className="w-12 h-12 text-muted-foreground opacity-20" />
           </div>
           <div className="max-w-sm">
-            <h3 className="text-lg font-semibold text-foreground">Team Management</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Team Management
+            </h3>
             <p className="text-sm text-muted-foreground mt-1">
-              We're currently building advanced team collaboration features. Check back soon!
+              We're currently building advanced team collaboration features.
+              Check back soon!
             </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
@@ -338,16 +356,19 @@ export default function SettingsPage() {
       )}
 
       {/* Security Settings */}
-      {activeTab === 'security' && (
+      {activeTab === "security" && (
         <div className="space-y-6 max-w-2xl">
           <Card className="p-8 border border-border bg-card flex flex-col items-center justify-center text-center space-y-4">
             <div className="p-4 rounded-full bg-secondary/50">
               <Shield className="w-10 h-10 text-muted-foreground opacity-20" />
             </div>
             <div className="max-w-sm">
-              <h3 className="text-lg font-semibold text-foreground">Two-Factor Authentication</h3>
+              <h3 className="text-lg font-semibold text-foreground">
+                Two-Factor Authentication
+              </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Enhanced security features including 2FA are currently under development.
+                Enhanced security features including 2FA are currently under
+                development.
               </p>
             </div>
             <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-600 border border-yellow-500/20">
@@ -356,10 +377,15 @@ export default function SettingsPage() {
           </Card>
 
           <Card className="p-6 border border-border bg-card">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Active Sessions</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">
+              Active Sessions
+            </h2>
             <div className="space-y-3">
               {sessions.map((session) => (
-                <div key={session._id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                <div
+                  key={session._id}
+                  className="flex items-center justify-between p-3 border border-border rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-secondary rounded-full">
                       <Laptop className="w-4 h-4 text-muted-foreground" />
@@ -369,13 +395,14 @@ export default function SettingsPage() {
                         Web Session
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Created {new Date(session.createdAt).toLocaleDateString()}
+                        Created{" "}
+                        {new Date(session.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRevokeSession(session._id)}
                   >
@@ -384,33 +411,48 @@ export default function SettingsPage() {
                 </div>
               ))}
               {sessions.length === 0 && (
-                <p className="text-sm text-muted-foreground">No active sessions found.</p>
+                <p className="text-sm text-muted-foreground">
+                  No active sessions found.
+                </p>
               )}
             </div>
           </Card>
 
           <Card className="p-6 border border-destructive/20 bg-destructive/5">
-            <h2 className="text-lg font-semibold text-destructive mb-2">Delete Workspace</h2>
+            <h2 className="text-lg font-semibold text-destructive mb-2">
+              Delete Workspace
+            </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Permanently delete your workspace and all associated data. This action cannot be undone.
+              Permanently delete your workspace and all associated data. This
+              action cannot be undone.
             </p>
-            
+
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <DialogTrigger asChild>
-                <Button variant="destructive" className="w-full sm:w-auto">Delete Workspace</Button>
+                <Button variant="destructive" className="w-full sm:w-auto">
+                  Delete Workspace
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Are you absolutely sure?</DialogTitle>
                   <DialogDescription>
-                    This action cannot be undone. This will permanently delete your
-                    workspace, all projects, events, and user data.
+                    This action cannot be undone. This will permanently delete
+                    your workspace, all projects, events, and user data.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="destructive" onClick={handleDeleteAccount} disabled={deleting}>
-                    {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                    {deleting ? 'Deleting...' : 'Confirm Deletion'}
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                  >
+                    {deleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Trash2 className="w-4 h-4 mr-2" />
+                    )}
+                    {deleting ? "Deleting..." : "Confirm Deletion"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -420,28 +462,50 @@ export default function SettingsPage() {
       )}
 
       {/* Email/Notification Settings */}
-      {activeTab === 'email' && (
+      {activeTab === "email" && (
         <Card className="p-6 border border-border bg-card max-w-2xl">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Notification Preferences</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Notification Preferences
+          </h2>
           <div className="space-y-4">
             <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card hover:bg-secondary/20 transition-colors">
-              <input type="checkbox" id="alerts" defaultChecked className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary" />
+              <input
+                type="checkbox"
+                id="alerts"
+                defaultChecked
+                className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary"
+              />
               <label htmlFor="alerts" className="cursor-pointer">
-                <p className="font-medium text-sm text-foreground">Alert Notifications</p>
-                <p className="text-xs text-muted-foreground">Receive emails when your configured alerts are triggered.</p>
+                <p className="font-medium text-sm text-foreground">
+                  Alert Notifications
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Receive emails when your configured alerts are triggered.
+                </p>
               </label>
             </div>
-            
+
             <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card hover:bg-secondary/20 transition-colors">
-              <input type="checkbox" id="reports" defaultChecked className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary" />
+              <input
+                type="checkbox"
+                id="reports"
+                defaultChecked
+                className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary"
+              />
               <label htmlFor="reports" className="cursor-pointer">
-                <p className="font-medium text-sm text-foreground">Scheduled AI Reports</p>
-                <p className="text-xs text-muted-foreground">Receive automated AI insights directly to your email.</p>
-                
+                <p className="font-medium text-sm text-foreground">
+                  Scheduled AI Reports
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Receive automated AI insights directly to your email.
+                </p>
+
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Frequency:</span>
+                  <span className="text-xs text-muted-foreground">
+                    Frequency:
+                  </span>
                   <Select defaultValue="weekly">
-                    <SelectTrigger className="h-8 w-[120px] text-xs">
+                    <SelectTrigger className="h-8 w-30 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -456,12 +520,11 @@ export default function SettingsPage() {
             </div>
           </div>
           <div className="mt-6 flex justify-end">
-            <Button 
-              onClick={handleSavePreferences}
-              disabled={saving}
-            >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              {saving ? 'Saving...' : 'Save Preferences'}
+            <Button onClick={handleSavePreferences} disabled={saving}>
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              {saving ? "Saving..." : "Save Preferences"}
             </Button>
           </div>
         </Card>
