@@ -83,7 +83,7 @@ export default function SettingsPage() {
       });
       
       if (response.ok) {
-        await refreshData(); // Update global context
+        await refreshData(true); // Update global context (forced)
         toast({
           title: "Success",
           description: "Workspace settings updated successfully.",

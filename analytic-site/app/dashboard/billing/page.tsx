@@ -40,7 +40,7 @@ const plans = [
 
 export default function BillingPage() {
   const searchParams = useSearchParams();
-  const { usage, company, loading: contextLoading } = useDashboard();
+  const { usage, company, loading: contextLoading, refreshData } = useDashboard();
   const [currentPlan, setCurrentPlan] = useState<string>('free');
   const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD');
   const [loading, setLoading] = useState(false);
@@ -55,6 +55,7 @@ export default function BillingPage() {
     const sessionId = searchParams.get('session');
     if (sessionId) {
       setMessage('Payment successful! Your subscription has been activated.');
+      refreshData(true); // Force refresh to update plan and limits
       setTimeout(() => setMessage(''), 5000);
     }
   }, [company, searchParams]);
@@ -77,6 +78,7 @@ export default function BillingPage() {
         window.location.href = data.data.url;
       } else if (response.ok && plan === 'free') {
         // Successfully downgraded to free
+        await refreshData(true); // Force refresh to update plan and limits
         setCurrentPlan('free');
         setMessage('Downgraded to Free plan');
         setTimeout(() => setMessage(''), 3000);

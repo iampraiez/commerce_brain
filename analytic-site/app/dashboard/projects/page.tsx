@@ -138,7 +138,7 @@ export default function ProjectsPage() {
 
       const result = await response.json();
       if (response.ok) {
-        await refreshData(); // Update global context
+        await refreshData(true); // Update global context (forced)
         setProjectName('');
         setShowNewProject(false);
         // Optimistic update or wait for context? Context update will trigger useEffect
@@ -181,6 +181,7 @@ export default function ProjectsPage() {
 
       const result = await response.json();
       if (response.ok) {
+        await refreshData(true); // Update global context (forced)
         setProjects(projects.map(p => p._id === selectedProject._id ? result.data : p));
         setSelectedProject(result.data);
         setShowSettings(false);
@@ -216,6 +217,7 @@ export default function ProjectsPage() {
       });
 
       if (response.ok) {
+        await refreshData(true); // Update global context (forced)
         const remainingProjects = projects.filter(p => p._id !== selectedProject._id);
         setProjects(remainingProjects);
         setSelectedProject(remainingProjects.length > 0 ? remainingProjects[0] : null);
