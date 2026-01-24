@@ -19,9 +19,7 @@
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js",
       "types": "./dist/types/index.d.ts",
-      "browser": "./dist/esm/browser.js",
-      "node": "./dist/esm/node.js",
-      "default": "./dist/esm/browser.js"
+      "default": "./dist/esm/index.js"
     }
   },
   "browser": {

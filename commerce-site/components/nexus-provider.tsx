@@ -33,8 +33,9 @@ export function NexusProvider({ children }: { children: React.ReactNode }) {
 
   // Identify user when session changes
   useEffect(() => {
-    if (session?.user?.id) {
-      Nexus.identify(session.user.id);
+    const user = session?.user as any;
+    if (user?.id) {
+      Nexus.identify(user.id);
     }
   }, [session]);
 

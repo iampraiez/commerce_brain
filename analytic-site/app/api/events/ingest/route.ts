@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/db';
 import { hashApiKey } from '@/lib/crypto';
 import { isValidEventName, isValidUserId } from '@/lib/validation';
-import { createSuccessResponse, createErrorResponse } from '@/lib/api-response';
-import { ObjectId } from 'mongodb';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
