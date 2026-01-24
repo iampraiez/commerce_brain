@@ -58,7 +58,10 @@ export async function POST(request: NextRequest) {
 
     // Process events
     const processedEvents = events.map((event: any) => {
-      if (!event.eventName || !isValidEventName(event.eventName)) {
+      const eventName = event.eventName || event.type;
+      const properties = event.properties || event.data || {};
+      
+      if (!eventName || !isValidEventName(eventName)) {
         throw new Error('Invalid event name');
       }
 
@@ -69,8 +72,8 @@ export async function POST(request: NextRequest) {
       return {
         projectId: keyDoc.projectId,
         userId: event.userId || null,
-        eventName: event.eventName,
-        properties: event.properties || {},
+        eventName: eventName,
+        properties: properties,
         timestamp: event.timestamp ? new Date(event.timestamp) : new Date(),
         environment: event.environment || 'production',
         sdkVersion: event.sdkVersion || 'unknown',
