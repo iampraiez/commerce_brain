@@ -163,11 +163,11 @@ export default function BillingPage() {
               <Card
                 key={plan.id}
                 className={`p-6 border relative overflow-hidden transition-all ${
-                  isCurrent 
-                    ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' 
-                    : !usage.isFreeTier && plan.id === 'free'
-                      ? 'border-border bg-card/50 opacity-60' // Dim free plan if Pro is active
-                      : 'border-border bg-card hover:border-primary/50'
+                  isCurrent
+                    ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
+                    : !usage.isFreeTier
+                      ? "border-border bg-card/50 opacity-60" // Dim both cards if user is on Pro
+                      : "border-border bg-card hover:border-primary/50"
                 }`}
               >
                 {isCurrent && (
@@ -175,34 +175,45 @@ export default function BillingPage() {
                     CURRENT PLAN
                   </div>
                 )}
-                
+
                 <div className="mb-4">
                   <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
                     {plan.name}
-                    {plan.id === 'pro' && <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />}
+                    {plan.id === "pro" && (
+                      <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                    )}
                   </h2>
-                  <p className="text-muted-foreground text-sm">{plan.description}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {plan.description}
+                  </p>
                 </div>
 
                 <div className="mb-6">
                   <span className="text-4xl font-bold text-foreground">
-                    {symbol}{price}
+                    {symbol}
+                    {price}
                   </span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
 
                 <Button
                   className="w-full mb-6"
-                  variant={isCurrent || (!usage.isFreeTier && plan.id === 'free') ? 'outline' : 'default'}
+                  variant={
+                    isCurrent || !usage.isFreeTier ? "outline" : "default"
+                  }
                   onClick={() => handleUpgrade(plan.id)}
-                  disabled={loading || isCurrent || (!usage.isFreeTier && plan.id === 'free')}
+                  disabled={loading || isCurrent || !usage.isFreeTier}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : isCurrent ? (
-                    'Active'
+                    "Active"
                   ) : !usage.isFreeTier ? (
-                    'Included'
+                    plan.id === "pro" ? (
+                      "Subscribed"
+                    ) : (
+                      "Included"
+                    )
                   ) : (
                     `Upgrade to ${plan.name}`
                   )}
