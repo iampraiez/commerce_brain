@@ -191,12 +191,14 @@ export default function BillingPage() {
                   className="w-full mb-6"
                   variant={isCurrent ? 'outline' : 'default'}
                   onClick={() => handleUpgrade(plan.id)}
-                  disabled={loading || isCurrent}
+                  disabled={loading || isCurrent || (!usage.isFreeTier && plan.id === 'free')}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : isCurrent ? (
                     'Active'
+                  ) : !usage.isFreeTier ? (
+                    'Premium User'
                   ) : (
                     `Upgrade to ${plan.name}`
                   )}

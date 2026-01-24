@@ -45,19 +45,37 @@ export async function GET(request: NextRequest) {
       matchStage.environment = environment;
     }
 
-    // Calculate weekly cohorts
+    // Calculate cohorts based on range
     const cohorts = [];
     const now = new Date();
     
-    // We'll always show 4 weeks of cohorts for retention analysis
-    for (let i = 0; i < 4; i++) {
-      const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i + 1) * 7);
-      const weekEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i * 7);
+    // If range is short (7d or 24h), use Daily Cohorts (last 7 days)
+    // If range is long (30d, all), use Weekly Cohorts (last 4 weeks)
+    const isDaily = range === '7d' || range === '24h';
+    const periods = isDaily ? 7 : 4;
+    
+    for (let i = 0; i < periods; i++) {
+      let periodStart, periodEnd, label;
+      
+      if (isDaily) {
+        // Daily cohorts: Day 0 is today, Day 1 is yesterday, etc.
+        // We want to go back 'i' days.
+        // Start of day (00:00) 'i' days ago
+        periodStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        // End of day (23:59) 'i' days ago (which is start of i-1 days ago)
+        periodEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i + 1);
+        label = periodStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      } else {
+        // Weekly cohorts
+        periodStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i + 1) * 7);
+        periodEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i * 7);
+        label = `Week of ${periodStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+      }
 
-      // Users who first appeared in this week
+      // Users who first appeared in this period
       const cohortUsers = await db.collection('tracked_users').find({
         ...matchStage,
-        firstSeen: { $gte: weekStart, $lt: weekEnd }
+        firstSeen: { $gte: periodStart, $lt: periodEnd }
       }).toArray();
 
       const userIds = cohortUsers.map(u => u.externalUserId);
@@ -65,7 +83,7 @@ export async function GET(request: NextRequest) {
 
       if (totalUsers === 0) {
         cohorts.push({
-          cohort: `Week of ${weekStart.toLocaleDateString()}`,
+          cohort: label,
           users: 0,
           day1: 0,
           day7: 0,
@@ -77,7 +95,7 @@ export async function GET(request: NextRequest) {
 
       // Check activity in subsequent periods
       const checkRetention = async (days: number) => {
-        const activityStart = new Date(weekStart.getTime() + days * 24 * 60 * 60 * 1000);
+        const activityStart = new Date(periodStart.getTime() + days * 24 * 60 * 60 * 1000);
         if (activityStart > now) return null;
 
         const activeCount = await db.collection('events').distinct('userId', {
@@ -89,9 +107,9 @@ export async function GET(request: NextRequest) {
       };
 
       cohorts.push({
-        cohort: `Week of ${weekStart.toLocaleDateString()}`,
+        cohort: label,
         users: totalUsers,
-        day1: totalUsers,
+        day1: await checkRetention(1),
         day7: await checkRetention(7),
         day14: await checkRetention(14),
         day30: await checkRetention(30)

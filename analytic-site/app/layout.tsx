@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "Nexus - Event Analytics",
   description:
     "Track user events, analyze behavior, and understand your users with powerful, real-time analytics",
-  generator: "v0.app",
   icons: {
     icon: "/icon.svg",
     apple: "/apple-icon.png",

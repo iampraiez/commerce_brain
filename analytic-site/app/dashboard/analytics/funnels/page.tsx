@@ -176,7 +176,7 @@ export default function FunnelsPage() {
           </div>
           <div>
             <p className="text-muted-foreground text-xs md:text-sm mb-1">Overall Conversion</p>
-            <p className="text-lg md:text-2xl font-bold text-foreground">{overallConversion.toFixed(1)}%</p>
+            <p className="text-lg md:text-2xl font-bold text-foreground">{overallConversion.toFixed(2)}%</p>
             <p className="hidden md:block text-xs text-muted-foreground mt-1">In selected range</p>
           </div>
           <div className="col-span-2 md:col-span-1">
