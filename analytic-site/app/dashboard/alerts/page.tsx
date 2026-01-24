@@ -46,7 +46,85 @@ export default function AlertsPage() {
   const [hasMore, setHasMore] = useState(true);
   const observerTarget = useRef<HTMLTableRowElement>(null);
 
-  // ... (useEffect hooks remain unchanged)
+  useEffect(() => {
+    fetchAlerts();
+    fetchHistory(1);
+  }, []);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !historyLoading) {
+          console.log('[Alerts] Loading more history, page:', currentPage + 1);
+          fetchHistory(currentPage + 1);
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, historyLoading, currentPage]);
+
+  const fetchAlerts = async () => {
+    try {
+      const response = await fetch('/api/alerts');
+      const result = await response.json();
+      
+      if (result && result.success && result.data) {
+        setAlerts(Array.isArray(result.data) ? result.data : []);
+      } else if (result && !result.success) {
+        setError(result.error || 'Failed to fetch alerts');
+      }
+    } catch (err) {
+      console.error('[Alerts] Error fetching alerts:', err);
+      setError('An error occurred while fetching alerts');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchHistory = async (page: number) => {
+    if (page === 1) {
+      setHistoryLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+
+    try {
+      const response = await fetch(`/api/alerts/history?page=${page}&limit=20`);
+      const result = await response.json();
+      
+      if (result && result.success && result.data) {
+        const dataObj = result.data;
+        const historyItems = Array.isArray(dataObj.data) ? dataObj.data : [];
+        const pagination = dataObj.pagination || { hasMore: false };
+
+        if (page === 1) {
+          setHistory(historyItems);
+        } else {
+          setHistory(prev => [...prev, ...historyItems]);
+        }
+        
+        setCurrentPage(page);
+        setHasMore(!!pagination.hasMore);
+      } else {
+        if (page === 1) setHistory([]);
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error('[Alerts] Failed to fetch alert history:', err);
+      if (page === 1) setHistory([]);
+      setHasMore(false);
+    } finally {
+      setHistoryLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   const handleCreateOrUpdateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +164,8 @@ export default function AlertsPage() {
       setSubmitting(false);
     }
   };
+
+
 
   const handleDeleteAlert = async (alertId: string) => {
     if (!confirm('Are you sure you want to delete this alert?')) return;
