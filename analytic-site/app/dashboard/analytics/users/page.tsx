@@ -286,29 +286,7 @@ export default function UsersPage() {
           </div>
         </Card>
 
-        {/* Cohort Analysis Preview */}
-        <Card className="p-4 md:p-6 border border-border bg-card relative overflow-hidden">
-          {refreshing && (
-            <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center z-10">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
-          )}
-          <h2 className="text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6">Cohort Analysis</h2>
-          <div className="space-y-2 md:space-y-3">
-            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
-              <span className="text-xs md:text-sm font-medium">Week of Jan 1</span>
-              <span className="text-xs md:text-sm font-bold">245 users</span>
-            </div>
-            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
-              <span className="text-xs md:text-sm font-medium">Week of Jan 8</span>
-              <span className="text-xs md:text-sm font-bold">187 users</span>
-            </div>
-            <div className="flex items-center justify-between p-2 md:p-3 bg-secondary/30 rounded">
-              <span className="text-xs md:text-sm font-medium">Week of Jan 15</span>
-              <span className="text-xs md:text-sm font-bold">156 users</span>
-            </div>
-          </div>
-        </Card>
+
       </div>
 
       {/* User Segments */}

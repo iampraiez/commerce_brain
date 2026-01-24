@@ -27,7 +27,7 @@ export async function generateAnalyticsReport(data: AnalyticsReportData): Promis
     **Input Data:**
     - **Total Events:** ${data.totalEvents}
     - **Active Users:** ${data.activeUsers}
-    - **Top Events:** ${data.topEvents.map(e => `${e.name} (${e.count})`).join(', ')}
+    - **Top Events:** ${data.topEvents.map((e) => `${e.name} (${e.count})`).join(", ")}
     - **Recent Errors:** ${data.recentErrors}
 
     **Instructions:**
@@ -55,15 +55,26 @@ export async function generateAnalyticsReport(data: AnalyticsReportData): Promis
     **Tone:** Professional, authoritative, yet encouraging. Use "I" as your dedicated AI analyst.
     **Formatting:** Use bolding, lists, and clear headings to make it readable.
   `;
-
   try {
-    const result = await genAI!.models.generateContent({
-      model: "gemini-2.0-flash",
+    const result = await genAI.models.generateContent({
+      model: "gemini-2.5-flash",
       contents: prompt,
     });
-    return result.text as any
-  } catch (error) {
+    const text = result.text;
+    if (!text) {
+      throw new Error("Empty response from AI");
+    }
+
+    return text;
+  } catch (error: any) {
     console.error("Gemini generation error:", error);
-    throw new Error("Failed to generate AI report");
+
+    if (error.message?.includes("quota") || error.message?.includes("429")) {
+      throw new Error(
+        "AI credit limit exceeded or quota reached. Please try again later.",
+      );
+    }
+
+    throw new Error("an error occurred");
   }
 }

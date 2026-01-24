@@ -322,7 +322,9 @@ export default function EventsPage() {
                       backgroundColor: 'var(--color-card)',
                       border: '1px solid var(--color-border)',
                       borderRadius: '8px',
+                      color: 'var(--color-foreground)'
                     }}
+                    itemStyle={{ color: 'var(--color-foreground)' }}
                   />
                   <Legend />
                 </PieChart>

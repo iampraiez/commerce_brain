@@ -288,7 +288,8 @@ export default function SdkHealthPage() {
                 </div>
               ))}
               <p className="text-xs text-muted-foreground mt-4">
-                Latest version adoption: 65% (recommend updating 28% on 0.9.5)
+                Latest version adoption: {versionStats[0]?.percentage || 0}% 
+                {versionStats.length > 1 && ` (recommend updating ${100 - (versionStats[0]?.percentage || 0)}% on older versions)`}
               </p>
             </div>
           ) : (
@@ -399,6 +400,7 @@ export default function SdkHealthPage() {
       </Card>
 
       {/* Recommendations */}
+      {/* Recommendations */}
       {healthData.length > 0 && (
         <Card className="p-6 border border-border bg-card relative overflow-hidden">
           {refreshing && (
@@ -408,18 +410,37 @@ export default function SdkHealthPage() {
           )}
           <h2 className="text-xl font-semibold text-foreground mb-4">Recommendations</h2>
           <div className="space-y-3">
-            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
-              <p className="text-sm font-semibold text-foreground">Update SDK versions</p>
+            {/* Version Recommendation */}
+            {versionStats.length > 0 && (
+              <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
+                <p className="text-sm font-semibold text-foreground">SDK Version Status</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Most users are on v{versionStats[0].version} ({versionStats[0].percentage}%). 
+                  {versionStats.length > 1 && ` Consider encouraging updates for the ${100 - versionStats[0].percentage}% on older versions.`}
+                </p>
+              </div>
+            )}
+
+            {/* Performance Recommendation */}
+            <div className={`p-4 border rounded ${metrics.deliveryRate >= 99 ? 'bg-green-500/10 border-green-500/20' : 'bg-yellow-500/10 border-yellow-500/20'}`}>
+              <p className="text-sm font-semibold text-foreground">
+                {metrics.deliveryRate >= 99 ? 'Performance is healthy' : 'Check Delivery Rates'}
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Some users are still on older versions. Consider notifying them to upgrade to 1.1.4
+                Delivery rate is {metrics.deliveryRate}% and latency is {metrics.avgLatency}ms average.
+                {metrics.deliveryRate < 99 && " Investigate potential network issues or client-side blocking."}
               </p>
             </div>
-            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded">
-              <p className="text-sm font-semibold text-foreground">Performance is healthy</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Delivery rate is {metrics.deliveryRate}% and latency is under 150ms average
-              </p>
-            </div>
+
+            {/* Error Recommendation */}
+            {metrics.errorRate > 1 && (
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                <p className="text-sm font-semibold text-foreground">High Error Rate Detected</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Error rate is {metrics.errorRate}%. Review the error breakdown to identify top failing events.
+                </p>
+              </div>
+            )}
           </div>
         </Card>
       )}

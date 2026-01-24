@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Loader2, Sparkles, Calendar, Download, Mail, History, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AIAnalyticsPage() {
@@ -22,12 +23,52 @@ export default function AIAnalyticsPage() {
   const [currentReport, setCurrentReport] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [pollingReportId, setPollingReportId] = useState<string | null>(null);
 
   const { toast } = useToast();
 
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  // Polling effect for pending reports
+  useEffect(() => {
+    if (!pollingReportId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/ai/generate');
+        const data = await res.json();
+        if (data.success) {
+          const updatedReport = data.data.find((r: any) => r._id.toString() === pollingReportId);
+          if (updatedReport && updatedReport.status === 'completed') {
+            // Report completed!
+            setCurrentReport(updatedReport);
+            setHistory(data.data);
+            setGenerating(false);
+            setPollingReportId(null);
+            toast({
+              title: "Report Ready!",
+              description: "Your AI analytics report has been generated.",
+            });
+          } else if (updatedReport && updatedReport.status === 'failed') {
+            // Report failed
+            setGenerating(false);
+            setPollingReportId(null);
+            toast({
+              title: "Generation Failed",
+              description: updatedReport.error || "An error occurred while generating your report.",
+              variant: "destructive",
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Polling error:', err);
+      }
+    }, 3000); // Poll every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [pollingReportId]);
 
   const fetchHistory = async () => {
     try {
@@ -56,17 +97,41 @@ export default function AIAnalyticsPage() {
       });
       const data = await res.json();
       
-      if (data.success) {
+      if (res.status === 429) {
+        setGenerating(false);
+        toast({
+          title: "Daily Limit Reached",
+          description: data.error || "You've used your AI credit for today. Please try again tomorrow.",
+        });
+        return;
+      }
+
+      if (data.success && data.data.status === 'pending') {
+        // Report is being generated in background
+        const pendingReport = {
+          content: '',
+          generatedAt: data.data.generatedAt,
+          period: data.data.period,
+          status: 'pending',
+          _id: data.data.reportId
+        };
+        setCurrentReport(pendingReport);
+        setPollingReportId(data.data.reportId);
+        toast({
+          title: "Generating Report",
+          description: "Your report is being generated. This may take up to a minute.",
+        });
+      } else if (data.success && data.data.report) {
+        // Old sync response (no data available case)
         const newReport = {
           content: data.data.report,
           generatedAt: data.data.generatedAt,
           period,
-          _id: 'temp-' + Date.now() // Temp ID until refresh
+          dataAvailable: data.data.dataAvailable,
+          _id: 'temp-' + Date.now()
         };
         setCurrentReport(newReport);
-        if (data.data.dataAvailable) {
-          fetchHistory(); // Refresh list to get real ID
-        }
+        setGenerating(false);
         toast({
           title: "Report Generated",
           description: "Your AI analytics report is ready.",
@@ -76,13 +141,12 @@ export default function AIAnalyticsPage() {
       }
     } catch (err: any) {
       console.error('Generation failed:', err);
+      setGenerating(false);
       toast({
         title: "Generation Failed",
         description: err.message || "Could not generate report. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setGenerating(false);
     }
   };
 
@@ -121,7 +185,7 @@ export default function AIAnalyticsPage() {
             AI Insights
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Powered by Gemini 2.0 Flash
+            Powered by Gemini 2.5 Flash
           </p>
         </div>
 
@@ -145,15 +209,23 @@ export default function AIAnalyticsPage() {
               history.map((report) => (
                 <button
                   key={report._id}
-                  onClick={() => setCurrentReport(report)}
+                  onClick={() => setCurrentReport(currentReport?._id === report._id ? null : report)}
                   className={`w-full text-left p-3 rounded-lg text-sm transition-colors border ${
                     currentReport?._id === report._id
                       ? "bg-primary/10 border-primary/20 text-foreground"
                       : "hover:bg-secondary/50 border-transparent text-muted-foreground"
                   }`}
                 >
-                  <div className="font-medium capitalize">
+                  <div className="font-medium capitalize flex items-center gap-2">
                     {report.period} Report
+                    {report.status === 'pending' && (
+                      <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                    )}
+                    {report.status === 'failed' && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">
+                        Failed
+                      </span>
+                    )}
                   </div>
                   <div className="text-xs opacity-70 mt-1">
                     {new Date(report.generatedAt).toLocaleDateString()} •{" "}
@@ -233,20 +305,38 @@ export default function AIAnalyticsPage() {
                     size="sm"
                     onClick={handleDownload}
                     className="gap-2"
+                    disabled={currentReport.status === 'pending'}
                   >
                     <Download className="w-4 h-4" />
                     <span className="hidden sm:inline">Download</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-2"
+                    disabled={currentReport.status === 'pending'}
+                  >
                     <Mail className="w-4 h-4" />
                     <span className="hidden sm:inline">Email</span>
                   </Button>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-6 md:p-8">
-                <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
-                  <ReactMarkdown>{currentReport.content}</ReactMarkdown>
-                </div>
+                {currentReport.status === 'pending' ? (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                    <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">
+                      Generating Report...
+                    </h3>
+                    <p className="text-center max-w-sm">
+                      Your AI analytics report is being generated. This may take up to a minute.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-xl prose-h2:mt-8 prose-p:leading-relaxed prose-li:marker:text-primary">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentReport.content}</ReactMarkdown>
+                  </div>
+                )}
               </div>
             </>
           ) : (

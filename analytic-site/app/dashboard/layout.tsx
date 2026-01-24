@@ -85,7 +85,7 @@ function DashboardLayoutContent({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { loading } = useDashboard();
+  const { loading, usage } = useDashboard();
 
   async function handleLogout() {
     try {
@@ -114,6 +114,11 @@ function DashboardLayoutContent({
           <span className="font-bold text-lg bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
             Nexus
           </span>
+          {!usage.isFreeTier && (
+            <span className="px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[10px] font-bold border border-amber-500/20 tracking-wider">
+              PRO
+            </span>
+          )}
         </Link>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -140,6 +145,11 @@ function DashboardLayoutContent({
             <span className="font-bold text-lg bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
               Nexus
             </span>
+            {!usage.isFreeTier && (
+              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[10px] font-bold border border-amber-500/20 tracking-wider">
+                PRO
+              </span>
+            )}
           </Link>
 
           <nav className="space-y-2">

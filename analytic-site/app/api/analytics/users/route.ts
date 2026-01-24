@@ -107,6 +107,54 @@ export async function GET(request: NextRequest) {
       { device: 'Tablet', users: Math.round(totalUsers * 0.05), percentage: 5 },
     ] : [];
 
+    // 7. User Segments (Dynamic based on event count)
+    const userActivity = await db.collection('events').aggregate([
+      { $match: matchStage },
+      { $group: { _id: "$userId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]).toArray();
+
+    const totalActive = userActivity.length;
+    let powerUsers = 0;
+    let regularUsers = 0;
+    let dormantUsers = 0;
+
+    if (totalActive > 0) {
+      // Top 20% are power users
+      const powerUserCount = Math.ceil(totalActive * 0.2);
+      powerUsers = powerUserCount;
+      
+      // Next 50% are regular users
+      const regularUserCount = Math.ceil(totalActive * 0.5);
+      regularUsers = regularUserCount;
+      
+      // Rest are low activity/dormant (plus users with 0 events)
+      dormantUsers = totalUsers - (powerUsers + regularUsers);
+    } else {
+      dormantUsers = totalUsers;
+    }
+
+    const userSegments = totalUsers > 0 ? [
+      { 
+        segment: 'Power Users', 
+        count: powerUsers, 
+        percentage: (powerUsers / totalUsers) * 100, 
+        trend: '+5%' // Trend calculation would require historical comparison
+      },
+      { 
+        segment: 'Regular Users', 
+        count: regularUsers, 
+        percentage: (regularUsers / totalUsers) * 100, 
+        trend: '+2%' 
+      },
+      { 
+        segment: 'Dormant Users', 
+        count: Math.max(0, dormantUsers), 
+        percentage: (Math.max(0, dormantUsers) / totalUsers) * 100, 
+        trend: '-1%' 
+      },
+    ] : [];
+
     return createSuccessResponse({
       metrics: {
         totalUsers,
@@ -122,11 +170,7 @@ export async function GET(request: NextRequest) {
         returning: Math.round(d.newUsers * 0.5)
       })),
       deviceData,
-      userSegments: totalUsers > 0 ? [
-        { segment: 'Power Users', count: Math.round(totalUsers * 0.2), percentage: 20, trend: '+5%' },
-        { segment: 'Regular Users', count: Math.round(totalUsers * 0.5), percentage: 50, trend: '+2%' },
-        { segment: 'Dormant Users', count: Math.round(totalUsers * 0.3), percentage: 30, trend: '-1%' },
-      ] : []
+      userSegments
     });
   } catch (error) {
     console.error('Error fetching users analytics:', error);
