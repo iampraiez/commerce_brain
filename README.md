@@ -1,6 +1,6 @@
-# Nexus SDK - Comprehensive Guide
+# Nexus Ecosystem: Analytics Reimagined
 
-Welcome to the Nexus SDK, a production-ready TypeScript SDK for the Nexus analytics platform. This SDK is designed to work seamlessly in both Browser and Node.js environments.
+A complete, production-ready analytics ecosystem featuring a high-performance dashboard (`analytic-site`) and a seamless event-tracking package (`nexus-avail`) built for modern SaaS with Gemini 2.0 AI-driven insights and structured email deliverability.
 
 **Author:** [iampraiez](https://github.com/iampraiez)  
 **Repository:** [commerce_brain](https://github.com/iampraiez/commerce_brain)
@@ -9,6 +9,17 @@ Welcome to the Nexus SDK, a production-ready TypeScript SDK for the Nexus analyt
 - **Analytics Dashboard:** [nexus-anal.vercel.app](https://nexus-anal.vercel.app/)
 - **E-Commerce Store:** [shop-site-thingy.vercel.app](https://shop-site-thingy.vercel.app/)
 - **NPM Package:** [nexus-avail](https://www.npmjs.com/package/nexus-avail)
+
+---
+
+## 📽 Demo & Guide
+**Watch: Structured Email Sending for Spam Prevention**
+This video walkthrough covers how we've structured the Nexus Analytics email system to ensure 100% deliverability and compliance.
+
+[![Nexus Email Deliverability Guide](https://img.youtube.com/vi/V_W9JTFaDzk/maxresdefault.jpg)](https://youtu.be/V_W9JTFaDzk?si=oTUqAElgudQ-q_7z)
+*Click the image above to watch the walkthrough.*
+
+---
 
 ## 🚀 Quick Start
 

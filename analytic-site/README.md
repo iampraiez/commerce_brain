@@ -87,11 +87,6 @@ Nexus Analytics ensures high email deliverability through structured email sendi
 - **Compliance**: Includes mandatory unsubscribe links and physical address in every email.
 - **Technical Headers**: Implements `List-Unsubscribe` for better inbox placement.
 
-### 📽 Video Guide: Structured Email for Spam Prevention
-Watch our comprehensive guide on how we structure emails to ensure they NEVER end up in spam:
-
-[![Email Structure Guide](https://img.youtube.com/vi/V_W9JTFaDzk/0.jpg)](https://youtu.be/V_W9JTFaDzk?si=oTUqAElgudQ-q_7z)
-*Click the image above to watch the video guide.*
 
 ## 💳 Billing
 
