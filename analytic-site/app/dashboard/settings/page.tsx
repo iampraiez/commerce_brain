@@ -345,8 +345,8 @@ export default function SettingsPage() {
               Team Management
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
-              We're currently building advanced team collaboration features.
-              Check back soon!
+              We&apos;re currently building advanced team collaboration
+              features. Check back soon!
             </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">

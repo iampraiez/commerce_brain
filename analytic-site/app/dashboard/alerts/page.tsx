@@ -239,8 +239,8 @@ export default function AlertsPage() {
               {editingAlert ? "Edit Alert" : "Create New Alert"}
             </DialogTitle>
             <DialogDescription>
-              Configure your alert settings below. You'll receive notifications
-              when triggers are met.
+              Configure your alert settings below. You&apos;ll receive
+              notifications when triggers are met.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateOrUpdateAlert} className="space-y-4 mt-4">
@@ -266,7 +266,9 @@ export default function AlertsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="webhook" disabled>Webhook (Coming Soon)</SelectItem>
+                  <SelectItem value="webhook" disabled>
+                    Webhook (Coming Soon)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -318,7 +320,9 @@ export default function AlertsPage() {
                 Cancel
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {submitting && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
                 {editingAlert ? "Update Alert" : "Create Alert"}
               </Button>
             </DialogFooter>

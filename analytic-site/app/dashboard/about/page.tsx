@@ -27,15 +27,16 @@ export default function AboutPage() {
               I built Nexus to solve this. Initially designed as a specialized
               analytics platform for e-commerce applications, it has evolved
               into an open-source solution that can be adapted for any use case.
-              Whether you're tracking product views, user retention, or custom
-              events, Nexus gives you the data you need without the bloat.
+              Whether you&apos;re tracking product views, user retention, or
+              custom events, Nexus gives you the data you need without the
+              bloat.
             </p>
 
             <p>
               My goal was to create something that developers would actually
-              enjoy using. Clean APIs, fast dashboards, and insights that don't
-              require a data science degree to understand. Since it's open
-              source, the community can take it even further.
+              enjoy using. Clean APIs, fast dashboards, and insights that
+              don&apos;t require a data science degree to understand. Since
+              it&apos;s open source, the community can take it even further.
             </p>
           </div>
         </div>
@@ -71,7 +72,8 @@ export default function AboutPage() {
 
             <Card className="p-6 bg-secondary/30 border-border/50 backdrop-blur-sm max-w-sm">
               <p className="text-sm font-mono text-muted-foreground mb-4 italic">
-                "Code is like humor. When you have to explain it, it’s bad."
+                &quot;Code is like humor. When you have to explain it, it’s
+                bad.&quot;
               </p>
               <div className="flex items-center gap-4">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20">

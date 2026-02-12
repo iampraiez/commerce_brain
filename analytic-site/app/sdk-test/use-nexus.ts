@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Nexus } from "nexus-avail";
+import { env } from "@/config/env";
 import type { EventType, EventSchemas } from "nexus-avail";
 
 interface NexusHook {
@@ -14,8 +15,8 @@ interface NexusHook {
   flush: () => Promise<void>;
 }
 
-const API_KEY = process.env.NEXT_PUBLIC_NEXUS_API_KEY || "demo-key";
-const PROJECT_ID = process.env.NEXT_PUBLIC_NEXUS_PROJECT_ID || "demo-project";
+const API_KEY = env.NEXT_PUBLIC_NEXUS_API_KEY;
+const PROJECT_ID = env.NEXT_PUBLIC_NEXUS_PROJECT_ID;
 
 export function useNexus(): NexusHook {
   const [isInitialized, setIsInitialized] = useState(false);

@@ -37,11 +37,13 @@ export default function AIAnalyticsPage() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch('/api/ai/generate');
+        const res = await fetch("/api/ai/generate");
         const data = await res.json();
         if (data.success) {
-          const updatedReport = data.data.find((r: any) => r._id.toString() === pollingReportId);
-          if (updatedReport && updatedReport.status === 'completed') {
+          const updatedReport = data.data.find(
+            (r: any) => r._id.toString() === pollingReportId,
+          );
+          if (updatedReport && updatedReport.status === "completed") {
             // Report completed!
             setCurrentReport(updatedReport);
             setHistory(data.data);
@@ -51,21 +53,23 @@ export default function AIAnalyticsPage() {
               title: "Report Ready!",
               description: "Your AI analytics report has been generated.",
             });
-          } else if (updatedReport && updatedReport.status === 'failed') {
+          } else if (updatedReport && updatedReport.status === "failed") {
             // Report failed
             setGenerating(false);
             setPollingReportId(null);
             toast({
               title: "Generation Failed",
-              description: updatedReport.error || "An error occurred while generating your report.",
+              description:
+                updatedReport.error ||
+                "An error occurred while generating your report.",
               variant: "destructive",
             });
           }
         }
       } catch (err) {
-        console.error('Polling error:', err);
+        console.error("Polling error:", err);
       }
-    }, 3000); // Poll every 3 seconds
+    }, 3000); 
 
     return () => clearInterval(interval);
   }, [pollingReportId]);
