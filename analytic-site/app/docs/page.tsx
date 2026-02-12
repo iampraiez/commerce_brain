@@ -280,6 +280,35 @@ Nexus.track('order_created', {
             </div>
           </div>
 
+          {/* SDK Playground */}
+          <div className="space-y-6">
+            <h2 className="text-3xl font-semibold text-foreground">
+              SDK Playground
+            </h2>
+            <p className="text-base text-muted-foreground leading-relaxed">
+              Want to see the SDK in action without writing any code? Check out
+              our interactive SDK Playground. It's a live demo where you can
+              trigger events and see how they are tracked in real-time.
+            </p>
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h4 className="text-xl font-semibold text-foreground mb-2">
+                  Interactive Demo
+                </h4>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  A complete environment to test event tracking, including user
+                  auth, product telemetry, and order life-cycles.
+                </p>
+              </div>
+              <Link href="/sdk-test">
+                <Button size="lg" className="whitespace-nowrap gap-2">
+                  <Activity className="w-5 h-5" />
+                  Try the Playground
+                </Button>
+              </Link>
+            </div>
+          </div>
+
           {/* Environment Support */}
           <div className="space-y-6">
             <h2 className="text-3xl font-semibold text-foreground">

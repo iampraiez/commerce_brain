@@ -76,6 +76,12 @@ export default function HomePage() {
               >
                 Docs
               </Link>
+              <Link
+                href="/sdk-test"
+                className="text-sm text-muted-foreground hover:text-primary transition"
+              >
+                SDK Demo
+              </Link>
               <Link href="/auth/register">
                 <Button size="sm" className="text-sm">
                   Get Started

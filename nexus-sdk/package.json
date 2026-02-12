@@ -10,7 +10,7 @@
     "url": "git+https://github.com/iampraiez/commerce_brain.git",
     "directory": "nexus-sdk-build/nexus-sdk"
   },
-  "homepage": "https://github.com/iampraiez/commerce_brain/tree/main/nexus-sdk-build/nexus-sdk#readme",
+  "homepage": "https://github.com/iampraiez/commerce_brain/tree/main/nexus-sdk#readme",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
