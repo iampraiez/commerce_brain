@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { Nexus } from "nexus-avail";
-import type { EventType, EventSchemas } from "nexus-avail";
+import type { EventType, EventSchemas, NexusConfig } from "nexus-avail";
 
 interface NexusContextType {
   isInitialized: boolean;
@@ -46,13 +46,23 @@ export function NexusProvider({ children }: { children: ReactNode }) {
 
       try {
         await Nexus.destroy();
-        Nexus.init({
+        
+        const sdkConfig: NexusConfig = {
           apiKey: config.apiKey,
           projectId: config.projectId,
           environment: "development",
           batchSize: 5,
           flushInterval: 3000,
-        });
+          onKilled: (reason: string) => {
+            setStatus({
+              initialized: false,
+              session: null,
+              error: reason,
+            });
+          },
+        };
+
+        Nexus.init(sdkConfig);
 
         setStatus({
           initialized: true,

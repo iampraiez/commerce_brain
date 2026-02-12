@@ -136,11 +136,11 @@ function SdkTestContent() {
             {/* Status indicators */}
             <div className="flex items-center justify-between p-2.5 rounded-lg bg-background/20 border border-border/40">
               <div className="flex items-center gap-2.5">
-                <div className={`w-1.5 h-1.5 rounded-full ${isInitialized ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"}`} />
+                <div className={`w-1.5 h-1.5 rounded-full ${isInitialized ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : error?.includes("disabled") ? "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]" : "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"}`} />
                 <span className="text-[10px] font-bold text-muted-foreground">Status</span>
               </div>
-              <Badge variant={isInitialized ? "secondary" : "outline"} className={`h-5 text-[9px] px-2 font-black ${isInitialized ? "bg-emerald-500/10 text-emerald-500 border-none" : error ? "text-destructive border-destructive/30" : "text-amber-500 border-amber-500/30"}`}>
-                {isInitialized ? "ACTIVE" : error ? "ERROR" : "OFFLINE"}
+              <Badge variant={isInitialized ? "secondary" : "outline"} className={`h-5 text-[9px] px-2 font-black ${isInitialized ? "bg-emerald-500/10 text-emerald-500 border-none" : error?.includes("disabled") ? "bg-destructive/10 text-destructive border-none" : error ? "text-destructive border-destructive/30" : "text-amber-500 border-amber-500/30"}`}>
+                {isInitialized ? "ACTIVE" : error?.includes("disabled") ? "TERMINATED" : error ? "ERROR" : "OFFLINE"}
               </Badge>
             </div>
 

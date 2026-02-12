@@ -89,6 +89,14 @@ export class EventQueue {
     this.stopFlushTimer();
   }
 
+  /**
+   * Stop all operations permanently (until re-initialized)
+   */
+  stop(): void {
+    this.clear();
+    this.logger.info("EventQueue stopped");
+  }
+
   private startFlushTimer(): void {
     if (this.flushTimer) {
       return;

@@ -13,6 +13,7 @@ export interface NexusConfig {
   flushInterval?: number;
   maxRetries?: number;
   endpoint?: string;
+  onKilled?: (reason: string) => void;
 }
 
 /**

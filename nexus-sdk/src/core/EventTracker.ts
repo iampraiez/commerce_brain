@@ -28,6 +28,8 @@ export class EventTracker {
   private sessionId: string;
   private userId: string | null = null;
   private isOnline: boolean = true;
+  private consecutiveUnauthorizedErrors: number = 0;
+  private readonly MAX_UNAUTHORIZED_ERRORS = 3;
 
   constructor(
     config: NexusConfig,
@@ -152,7 +154,35 @@ export class EventTracker {
       );
 
       await this.transport.send(events, signature, timestamp, this.config.apiKey);
-    } catch (error) {
+      
+      // Reset counter on successful flush
+      this.consecutiveUnauthorizedErrors = 0;
+    } catch (error: any) {
+      // Check for unauthorized errors (401/403)
+      const isUnauthorized = 
+        error?.status === 401 || 
+        error?.status === 403 || 
+        error?.message?.toLowerCase().includes("unauthorized") ||
+        error?.message?.toLowerCase().includes("invalid api key");
+
+      if (isUnauthorized) {
+        this.consecutiveUnauthorizedErrors++;
+        this.logger.warn(`Unauthorized flush attempt ${this.consecutiveUnauthorizedErrors}/${this.MAX_UNAUTHORIZED_ERRORS}`);
+
+        if (this.consecutiveUnauthorizedErrors >= this.MAX_UNAUTHORIZED_ERRORS) {
+          const reason = "SDK disabled due to multiple consecutive unauthorized errors (invalid API key).";
+          this.logger.error(`CRITICAL: ${reason}`);
+          
+          // Stop the queue
+          this.queue.stop();
+          
+          // Notify the host application
+          if (this.config.onKilled) {
+            this.config.onKilled(reason);
+          }
+        }
+      }
+
       // Save to offline storage
       await this.saveOfflineEvents(events);
       throw error;
