@@ -56,8 +56,6 @@ async function handleCheckoutSessionCompleted(event: any) {
       },
     }
   );
-
-  console.log("[v0] Subscription created for company:", companyId);
 }
 
 async function handleInvoicePaid(event: any) {
@@ -76,8 +74,6 @@ async function handleInvoicePaid(event: any) {
         },
       }
     );
-
-    console.log("[v0] Invoice paid for subscription:", invoice.subscription);
   }
 }
 
@@ -97,8 +93,6 @@ async function handleInvoicePaymentFailed(event: any) {
         },
       }
     );
-
-    console.log("[v0] Invoice payment failed for subscription:", invoice.subscription);
   }
 }
 
@@ -118,8 +112,6 @@ async function handleSubscriptionDeleted(event: any) {
       },
     }
   );
-
-  console.log("[v0] Subscription canceled:", subscription.id);
 }
 
 export async function POST(request: NextRequest) {
@@ -154,7 +146,7 @@ export async function POST(request: NextRequest) {
         await handleSubscriptionDeleted(event);
         break;
       default:
-        console.log("[v0] Unhandled webhook event:", event.type);
+        console.log("Unhandled webhook event:", event.type);
     }
 
     return new Response(JSON.stringify({ received: true }), {

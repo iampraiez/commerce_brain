@@ -27,16 +27,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Run alert monitoring
-    console.log("[Alert Cron] Starting alert check...");
+    console.log("Starting alert check...");
     const stats = await checkAllAlerts();
-    console.log("[Alert Cron] Alert check complete:", stats);
+    console.log("Alert check complete:", stats);
 
     return createSuccessResponse({
       message: "Alert check complete",
       stats,
     });
   } catch (error) {
-    console.error("[Alert Cron] Error:", error);
+    console.error("Alert check failed:", error);
     return createErrorResponse("Alert check failed", 500);
   }
 }

@@ -78,8 +78,6 @@ export async function POST(
 
     const result = await db.collection("api_keys").insertOne(apiKey);
 
-    console.log("[v0] API key generated:", result.insertedId);
-
     return createSuccessResponse(
       {
         ...apiKey,

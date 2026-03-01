@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     // Insert events
     if (processedEvents.length > 0) {
       const result = await db.collection("events").insertMany(processedEvents);
-      console.log("[v0] Events ingested:", (result.insertedIds as any).length);
+      console.log("Events ingested:", (result.insertedIds as any).length);
 
       // Track user if userId provided
       for (const event of processedEvents) {

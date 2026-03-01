@@ -9,16 +9,24 @@ on:
     paths:
       - 'nexus-sdk/**'
     branches: [ main, master ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  typecheck-and-build:
+    name: TypeCheck & Build
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./nexus-sdk
     steps:
       - uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
@@ -27,14 +35,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'nexus-sdk/package.json'
+          cache-dependency-path: 'nexus-sdk/pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: |
-          cd nexus-sdk
-          pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build SDK
-        run: |
-          cd nexus-sdk
-          pnpm run build
+        run: pnpm run build

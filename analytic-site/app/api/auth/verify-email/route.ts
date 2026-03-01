@@ -57,8 +57,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log("[v0] Email verified for company:", companyId);
-
     return createSuccessResponse({ companyId }, 200, "Email verified successfully");
   } catch (error) {
     console.error("Email verification error:", error);

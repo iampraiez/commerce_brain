@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { AlertCircle, Loader2, Activity } from "lucide-react";
 import { MinimalBackground } from "@/components/minimal-background";
+import { Suspense } from "react";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -55,6 +56,79 @@ export default function RegisterPage() {
   }
 
   return (
+    <div className="p-6 border border-border/50 bg-card/30 backdrop-blur rounded-lg">
+      <form onSubmit={handleRegister} className="space-y-6">
+        {error && (
+          <div className="flex gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="companyName">Company Name</Label>
+          <Input
+            id="companyName"
+            type="text"
+            placeholder="Your Company"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            required
+            disabled={loading}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+            required
+            disabled={loading}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            required
+            disabled={loading}
+          />
+          <p className="text-xs text-muted-foreground">
+            At least 8 characters with uppercase, lowercase, and numbers
+          </p>
+        </div>
+
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Create Account"}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center text-sm text-muted-foreground">
+        Already have an account?{" "}
+        <Link
+          href={`/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
+          className="text-primary hover:text-primary/80 transition font-medium"
+        >
+          Sign in
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background relative overflow-hidden">
       <MinimalBackground />
       <div className="w-full max-w-md relative z-10">
@@ -72,74 +146,15 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="p-6 border border-border/50 bg-card/30 backdrop-blur rounded-lg">
-          <form onSubmit={handleRegister} className="space-y-6">
-            {error && (
-              <div className="flex gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-destructive">{error}</p>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input
-                id="companyName"
-                type="text"
-                placeholder="Your Company"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-                disabled={loading}
-              />
+        <Suspense
+          fallback={
+            <div className="p-12 border border-border/50 bg-card/30 backdrop-blur rounded-lg flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-                disabled={loading}
-              />
-              <p className="text-xs text-muted-foreground">
-                At least 8 characters with uppercase, lowercase, and numbers
-              </p>
-            </div>
-
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Create Account"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              href={`/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
-              className="text-primary hover:text-primary/80 transition font-medium"
-            >
-              Sign in
-            </Link>
-          </div>
-        </div>
+          }
+        >
+          <RegisterForm />
+        </Suspense>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Clear cookie
     cookieStore.delete("analytics-session");
 
-    console.log("[v0] Logout successful");
+    console.log("Logout successful");
 
     return createSuccessResponse({ success: true }, 200, "Logged out successfully");
   } catch (error) {

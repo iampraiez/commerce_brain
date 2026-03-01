@@ -9,16 +9,24 @@ on:
     paths:
       - 'analytic-site/**'
     branches: [ main, master ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  lint-and-typecheck:
+    name: Lint & TypeCheck
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./analytic-site
     steps:
       - uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
@@ -27,22 +35,44 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'analytic-site/package.json'
+          cache-dependency-path: 'analytic-site/pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: |
-          cd analytic-site
-          pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: |
-          cd analytic-site
-          pnpm run lint
+      - name: Run ESLint
+        run: pnpm run lint
 
-      - name: Build
-        run: |
-          cd analytic-site
-          pnpm run build
+      - name: Run TypeCheck
+        run: pnpm exec tsc --noEmit
+
+  build:
+    name: Build Production
+    needs: lint-and-typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./analytic-site
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: 'analytic-site/pnpm-lock.yaml'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next.js
+        run: pnpm run build
         env:
           NEXT_PUBLIC_NEXUS_API_KEY: ${{ secrets.NEXT_PUBLIC_NEXUS_API_KEY }}
           NEXT_PUBLIC_NEXUS_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_NEXUS_PROJECT_ID }}

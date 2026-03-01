@@ -52,8 +52,6 @@ export async function POST(request: NextRequest) {
 
     const result = await db.collection("projects").insertOne(project);
 
-    console.log("[v0] Project created:", result.insertedId);
-
     return createSuccessResponse(
       { ...project, _id: result.insertedId },
       201,
