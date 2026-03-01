@@ -4,7 +4,7 @@ import React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,8 @@ import { MinimalBackground } from "@/components/minimal-background";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,8 +45,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Redirect to dashboard or callbackUrl
+      router.push(callbackUrl || "/dashboard");
     } catch (err) {
       setError("An error occurred. Please try again.");
       console.error(err);
@@ -112,7 +114,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;`t have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/register"
               className="text-primary hover:text-primary/80 transition font-medium"

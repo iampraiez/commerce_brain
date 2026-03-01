@@ -14,6 +14,7 @@ export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const companyId = searchParams.get("companyId");
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,14 @@ export default function VerifyEmailPage() {
           <p className="text-muted-foreground text-sm mb-4">
             Company ID is missing. Please start the registration process again.
           </p>
-          <Button onClick={() => router.push("/auth/register")} className="w-full">
+          <Button
+            onClick={() =>
+              router.push(
+                `/auth/register${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`
+              )
+            }
+            className="w-full"
+          >
             Back to Registration
           </Button>
         </Card>
@@ -60,7 +68,9 @@ export default function VerifyEmailPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push(
+          `/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`
+        );
       }, 2000);
     } catch (err) {
       setError("An error occurred. Please try again.");

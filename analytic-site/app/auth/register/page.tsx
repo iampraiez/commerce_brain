@@ -4,7 +4,7 @@ import React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,8 @@ import { MinimalBackground } from "@/components/minimal-background";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +42,10 @@ export default function RegisterPage() {
       }
 
       // Redirect to email verification
-      router.push(`/auth/verify-email?companyId=${data.data.companyId}`);
+      const verifyUrl = `/auth/verify-email?companyId=${data.data.companyId}${
+        callbackUrl ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : ""
+      }`;
+      router.push(verifyUrl);
     } catch (err) {
       setError("An error occurred. Please try again.");
       console.error(err);
@@ -128,7 +133,7 @@ export default function RegisterPage() {
           <div className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href="/auth/login"
+              href={`/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
               className="text-primary hover:text-primary/80 transition font-medium"
             >
               Sign in
