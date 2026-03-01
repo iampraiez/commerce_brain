@@ -39,8 +39,8 @@ export default function PublicDocsPage() {
         <div className="space-y-20">
           {/* Hero Section */}
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-light text-foreground leading-relaxed flex items-center gap-3">
-              <Activity className="w-10 h-10 text-primary shrink-0" />
+            <h1 className="text-4xl md:text-6xl font-light text-foreground leading-relaxed flex items-center gap-3">
+              <Activity className="w-10 h-10 text-primary shrink-0 " />
               Nexus <span className="text-primary font-semibold">Analytics</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl">
