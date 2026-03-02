@@ -48,9 +48,7 @@ export async function POST(request: NextRequest) {
       return createErrorResponse("Billing configuration error. Please contact support.", 500);
     }
 
-    const session = await stripe.checkout.sessions.create({
-      customer: company.stripeCustomerId || undefined,
-      customer_email: company.stripeCustomerId ? undefined : company.email,
+    const sessionOptions: any = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -66,7 +64,15 @@ export async function POST(request: NextRequest) {
         plan,
         currency: currency || "USD",
       },
-    });
+    };
+
+    if (company.stripeCustomerId) {
+      sessionOptions.customer = company.stripeCustomerId;
+    } else {
+      sessionOptions.customer_email = company.email;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionOptions);
 
     return createSuccessResponse(
       { sessionId: session.id, url: session.url },

@@ -33,10 +33,10 @@ export async function GET(request: NextRequest) {
     return createSuccessResponse({
       plan: company.plan,
       status: stripeSubscription.status,
-      currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-      canceledAt: stripeSubscription.canceled_at
-        ? new Date(stripeSubscription.canceled_at * 1000)
+      currentPeriodStart: new Date((stripeSubscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((stripeSubscription as any).current_period_end * 1000),
+      canceledAt: (stripeSubscription as any).canceled_at
+        ? new Date((stripeSubscription as any).canceled_at * 1000)
         : null,
       items: stripeSubscription.items.data.map((item) => ({
         id: item.id,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (action === "cancel") {
       // Cancel subscription
-      const stripeSubscription = await stripe.subscriptions.del(subscription.stripeSubscriptionId);
+      await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
 
       // Update database
       await db.collection("subscriptions").updateOne(
