@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
 import { getSessionCompany } from "@/lib/auth";
 import { getDatabase } from "@/lib/db";
-import stripe, { PLANS } from "@/lib/stripe";
 import { createSuccessResponse, createErrorResponse } from "@/lib/api-response";
+import stripe, { PLANS } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,16 +11,8 @@ export async function POST(request: NextRequest) {
       return createErrorResponse("Not authenticated", 401);
     }
 
-    const body = await request.json();
-    const { plan, currency } = body;
+    const { plan, currency } = await request.json();
 
-    if (!plan || !["free", "pro"].includes(plan)) {
-      return createErrorResponse("Invalid plan", 400);
-    }
-
-    const planConfig = PLANS[plan as keyof typeof PLANS];
-
-    // If upgrading to free, just return success (no payment needed)
     if (plan === "free") {
       const db = await getDatabase();
       await db.collection("companies").updateOne(
@@ -32,19 +24,12 @@ export async function POST(request: NextRequest) {
           },
         }
       );
-
-      return createSuccessResponse(
-        { plan: "free", status: "success" },
-        200,
-        "Downgraded to Free plan"
-      );
+      return createSuccessResponse({}, 200, "Plan updated to free");
     }
 
-    // For pro plan, create checkout session
-    const priceId = currency === "NGN" ? planConfig.priceIdNgn : planConfig.priceId;
+    const priceId = currency === "NGN" ? PLANS.pro.priceIdNgn : PLANS.pro.priceId;
 
     if (!priceId) {
-      console.error("Stripe Price ID is missing for plan:", plan, "currency:", currency);
       return createErrorResponse("Billing configuration error. Please contact support.", 500);
     }
 
@@ -80,7 +65,7 @@ export async function POST(request: NextRequest) {
       "Checkout session created"
     );
   } catch (error) {
-    console.error("Billing error:", error);
+    console.error("Checkout error:", error);
     return createErrorResponse("Failed to create checkout session", 500);
   }
 }

@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
 import { getSessionCompany } from "@/lib/auth";
 import { getDatabase } from "@/lib/db";
-import stripe from "@/lib/stripe";
 import { createSuccessResponse, createErrorResponse } from "@/lib/api-response";
+import stripe from "@/lib/stripe";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const company = await getSessionCompany();
     if (!company) {
@@ -12,20 +12,14 @@ export async function GET(request: NextRequest) {
     }
 
     const db = await getDatabase();
-
-    // Get subscription from database
     const subscription = await db.collection("subscriptions").findOne({
       companyId: company._id,
     });
 
-    if (!subscription) {
-      return createSuccessResponse({
-        plan: company.plan,
-        status: "no_subscription",
-      });
+    if (!subscription || !subscription.stripeSubscriptionId) {
+      return createSuccessResponse({ plan: company.plan || "free" });
     }
 
-    // Get Stripe subscription details
     const stripeSubscription = await stripe.subscriptions.retrieve(
       subscription.stripeSubscriptionId
     );
@@ -45,7 +39,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("Error fetching subscription:", error);
+    console.error("Subscription fetch error:", error);
     return createErrorResponse("Failed to fetch subscription", 500);
   }
 }
@@ -57,34 +51,33 @@ export async function POST(request: NextRequest) {
       return createErrorResponse("Not authenticated", 401);
     }
 
-    const body = await request.json();
-    const { action } = body;
-
+    const { action } = await request.json();
     const db = await getDatabase();
+
     const subscription = await db.collection("subscriptions").findOne({
       companyId: company._id,
     });
 
-    if (!subscription) {
-      return createErrorResponse("No active subscription", 404);
+    if (!subscription || !subscription.stripeSubscriptionId) {
+      return createErrorResponse("No active subscription found", 404);
     }
 
     if (action === "cancel") {
-      // Cancel subscription
       await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
 
-      // Update database
+      // Update in database
       await db.collection("subscriptions").updateOne(
-        { companyId: company._id },
+        { _id: subscription._id },
         {
           $set: {
             status: "canceled",
             canceledAt: new Date(),
+            updatedAt: new Date(),
           },
         }
       );
 
-      // Downgrade company to free
+      // Downgrade company plan
       await db.collection("companies").updateOne(
         { _id: company._id },
         {
@@ -95,36 +88,31 @@ export async function POST(request: NextRequest) {
         }
       );
 
-      return createSuccessResponse({ status: "canceled" }, 200, "Subscription canceled");
+      return createSuccessResponse({}, 200, "Subscription canceled successfully");
     }
 
     if (action === "resume") {
-      // Resume canceled subscription
       const stripeSubscription = await stripe.subscriptions.update(
         subscription.stripeSubscriptionId,
         { pause_collection: null }
       );
 
       await db.collection("subscriptions").updateOne(
-        { companyId: company._id },
+        { _id: subscription._id },
         {
           $set: {
             status: stripeSubscription.status,
-            canceledAt: null,
+            updatedAt: new Date(),
           },
         }
       );
 
-      return createSuccessResponse(
-        { status: stripeSubscription.status },
-        200,
-        "Subscription resumed"
-      );
+      return createSuccessResponse({}, 200, "Subscription resumed successfully");
     }
 
     return createErrorResponse("Invalid action", 400);
   } catch (error) {
-    console.error("Error updating subscription:", error);
+    console.error("Subscription update error:", error);
     return createErrorResponse("Failed to update subscription", 500);
   }
 }

@@ -58,6 +58,7 @@ interface Project {
 
 interface ApiKey {
   _id: string;
+  plainKey?: string;
   displayKey: string;
   isActive: boolean;
   createdAt: string;
@@ -270,7 +271,7 @@ export default function ProjectsPage() {
       const result = await response.json();
       if (response.ok) {
         setApiKeys([result.data, ...apiKeys]);
-        setNewlyGeneratedKey(result.data.key);
+        setNewlyGeneratedKey(result.data.plainKey);
         toast({
           title: "API key generated",
           description: "Make sure to copy your new key now. You won't be able to see it again.",
@@ -639,7 +640,7 @@ export default function ProjectsPage() {
                             variant="outline"
                             size="sm"
                             className="gap-2 h-8"
-                            onClick={() => handleCopy(key.displayKey, key._id)}
+                            onClick={() => handleCopy(key.plainKey || key.displayKey, key._id)}
                           >
                             {copiedKeyId === key._id ? (
                               <Check className="w-3 h-3" />

@@ -71,6 +71,7 @@ export async function POST(
     const apiKey = {
       projectId: new ObjectId(projectId),
       key: hashedKey,
+      plainKey: key, // Store plain key for retrieval/copying
       displayKey,
       isActive: true,
       createdAt: new Date(),
@@ -82,7 +83,6 @@ export async function POST(
       {
         ...apiKey,
         _id: result.insertedId,
-        key, // Return actual key only once
       },
       201,
       "API key generated successfully"

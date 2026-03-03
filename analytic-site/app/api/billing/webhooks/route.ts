@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { getDatabase } from "@/lib/db";
-import stripe from "@/lib/stripe";
 import { ObjectId } from "mongodb";
+
+import stripe from "@/lib/stripe";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
@@ -36,15 +37,20 @@ async function handleCheckoutSessionCompleted(event: any) {
   // Create subscription record
   const subscription = await stripe.subscriptions.retrieve(session.subscription);
 
-  await db.collection("subscriptions").insertOne({
-    companyId: new ObjectId(companyId),
-    stripeSubscriptionId: session.subscription,
-    stripePriceId: session.metadata?.plan || "pro",
-    status: subscription.status,
-    currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
-    currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
-    createdAt: new Date(),
-  });
+  await db.collection("subscriptions").updateOne(
+    { companyId: new ObjectId(companyId) },
+    {
+      $set: {
+        stripeSubscriptionId: session.subscription,
+        stripePriceId: session.metadata?.plan || "pro",
+        status: subscription.status,
+        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        updatedAt: new Date(),
+      },
+    },
+    { upsert: true }
+  );
 
   // Update company plan
   await db.collection("companies").updateOne(
