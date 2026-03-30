@@ -20,42 +20,42 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDatabase();
-    
+
     // Verify user has admin rights to this project
-    const project = await db.collection("projects").findOne({ 
-      _id: new ObjectId(projectId), 
-      companyId: company._id 
+    const project = await db.collection("projects").findOne({
+      _id: new ObjectId(projectId),
+      companyId: company._id,
     });
 
     if (!project) {
-       return createErrorResponse("Project not found or you don't have access", 404);
+      return createErrorResponse("Project not found or you don't have access", 404);
     }
 
     // Add to members array or invites array
     await db.collection("projects").updateOne(
       { _id: new ObjectId(projectId) },
-      { 
-        $addToSet: { 
-          invites: { 
-            email, 
-            role, 
-            invitedAt: new Date(), 
-            invitedBy: company._id 
-          } 
-        } 
+      {
+        $addToSet: {
+          invites: {
+            email,
+            role,
+            invitedAt: new Date(),
+            invitedBy: company._id,
+          },
+        },
       }
     );
 
     // Send email
     // A real implementation would generate a secure token here
     const inviteLink = `https://nexus-analytics.app/invite?project=${projectId}`;
-    
+
     await EmailService.sendMail({
       to: email,
       subject: `You have been invited to join ${project.name} on Nexus Analytics`,
       text: `You have been invited to join the project ${project.name} with role ${role}. Join here: ${inviteLink}`,
       html: `<p>You have been invited to join the project <strong>${project.name}</strong> with role <strong>${role}</strong>.</p><a href="${inviteLink}">Accept Invitation</a>`,
-      category: 'invite'
+      category: "invite",
     });
 
     return createSuccessResponse({ invited: email, role });

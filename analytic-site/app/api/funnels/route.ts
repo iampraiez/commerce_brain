@@ -19,18 +19,21 @@ export async function GET(request: NextRequest) {
     }
 
     const db = await getDatabase();
-    
+
     // Verify ownership
     const project = await db.collection("projects").findOne({
       _id: new ObjectId(projectId),
-      companyId: company._id
+      companyId: company._id,
     });
 
     if (!project) {
-       return createErrorResponse("Project not found", 404);
+      return createErrorResponse("Project not found", 404);
     }
 
-    const funnels = await db.collection("funnels").find({ projectId: new ObjectId(projectId) }).toArray();
+    const funnels = await db
+      .collection("funnels")
+      .find({ projectId: new ObjectId(projectId) })
+      .toArray();
 
     return createSuccessResponse(funnels);
   } catch (error) {
@@ -50,18 +53,21 @@ export async function POST(request: NextRequest) {
     const { name, projectId, steps } = body;
 
     if (!name || !projectId || !steps || !Array.isArray(steps) || steps.length < 2) {
-      return createErrorResponse("Missing required fields or invalid steps (min 2 steps required)", 400);
+      return createErrorResponse(
+        "Missing required fields or invalid steps (min 2 steps required)",
+        400
+      );
     }
 
     const db = await getDatabase();
-    
+
     const project = await db.collection("projects").findOne({
       _id: new ObjectId(projectId),
-      companyId: company._id
+      companyId: company._id,
     });
 
     if (!project) {
-       return createErrorResponse("Project not found", 404);
+      return createErrorResponse("Project not found", 404);
     }
 
     const result = await db.collection("funnels").insertOne({
@@ -95,13 +101,13 @@ export async function DELETE(request: NextRequest) {
 
     const db = await getDatabase();
 
-    const result = await db.collection("funnels").deleteOne({ 
+    const result = await db.collection("funnels").deleteOne({
       _id: new ObjectId(id),
-      companyId: company._id
+      companyId: company._id,
     });
 
     if (result.deletedCount === 0) {
-       return createErrorResponse("Funnel not found or access denied", 404);
+      return createErrorResponse("Funnel not found or access denied", 404);
     }
 
     return createSuccessResponse({ deleted: true });

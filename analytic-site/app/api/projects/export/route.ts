@@ -20,26 +20,36 @@ export async function GET(request: NextRequest) {
     }
 
     const db = await getDatabase();
-    
+
     // Verify ownership
-    const project = await db.collection("projects").findOne({ 
-      _id: new ObjectId(projectId), 
-      companyId: company._id 
+    const project = await db.collection("projects").findOne({
+      _id: new ObjectId(projectId),
+      companyId: company._id,
     });
 
     if (!project) {
-       return new Response("Project not found or you don't have access", { status: 404 });
+      return new Response("Project not found or you don't have access", { status: 404 });
     }
 
-    const events = await db.collection("events")
+    const events = await db
+      .collection("events")
       .find({ projectId: new ObjectId(projectId), environment })
       .sort({ timestamp: -1 })
       .limit(limit)
       .toArray();
 
     // Convert to CSV
-    const headers = ["Event ID", "Event Name", "User ID", "Session ID", "Environment", "Timestamp", "Properties JSON", "Metadata JSON"];
-    const rows = events.map(e => [
+    const headers = [
+      "Event ID",
+      "Event Name",
+      "User ID",
+      "Session ID",
+      "Environment",
+      "Timestamp",
+      "Properties JSON",
+      "Metadata JSON",
+    ];
+    const rows = events.map((e) => [
       e._id.toString(),
       e.eventName,
       e.userId || "anonymous",
@@ -47,20 +57,20 @@ export async function GET(request: NextRequest) {
       e.environment || environment,
       e.timestamp ? new Date(e.timestamp).toISOString() : "",
       JSON.stringify(e.properties || {}).replace(/"/g, '""'),
-      JSON.stringify(e.metadata || {}).replace(/"/g, '""')
+      JSON.stringify(e.metadata || {}).replace(/"/g, '""'),
     ]);
 
     const csvContent = [
       headers.join(","),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
     ].join("\n");
 
     return new Response(csvContent, {
       status: 200,
       headers: {
         "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="${project.name.replace(/\\s+/g, '_')}_events_export.csv"`
-      }
+        "Content-Disposition": `attachment; filename="${project.name.replace(/\\s+/g, "_")}_events_export.csv"`,
+      },
     });
   } catch (error) {
     console.error("Error exporting data:", error);

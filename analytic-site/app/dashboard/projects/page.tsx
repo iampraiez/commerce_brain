@@ -586,7 +586,12 @@ export default function ProjectsPage() {
                       Use these keys to authenticate your SDK requests
                     </p>
                   </div>
-                  <Button onClick={handleGenerateApiKey} size="sm" className="gap-2" disabled={generatingKey}>
+                  <Button
+                    onClick={handleGenerateApiKey}
+                    size="sm"
+                    className="gap-2"
+                    disabled={generatingKey}
+                  >
                     {generatingKey ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
@@ -720,7 +725,11 @@ export default function ProjectsPage() {
                   <h4 className="text-sm font-semibold text-foreground">Integration Guide</h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                     Ready to start tracking? Check out our{" "}
-                    <Link href="/docs" target="_blank" className="text-primary hover:underline font-medium">
+                    <Link
+                      href="/docs"
+                      target="_blank"
+                      className="text-primary hover:underline font-medium"
+                    >
                       SDK Documentation
                     </Link>{" "}
                     to learn how to initialize the Nexus SDK with your project credentials.

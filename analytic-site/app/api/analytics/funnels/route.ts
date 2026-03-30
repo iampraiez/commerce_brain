@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     if (funnelId && funnelId !== "default") {
       const customFunnel = await db.collection("funnels").findOne({
         _id: new ObjectId(funnelId),
-        companyId: company._id
+        companyId: company._id,
       });
       if (customFunnel && customFunnel.steps) {
         steps = customFunnel.steps;

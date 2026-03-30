@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
       // Count events in last 1 hour
       const lastHourEvents = await db.collection("events").countDocuments({
         projectId: project._id,
-        timestamp: { $gte: oneHourAgo, $lte: now }
+        timestamp: { $gte: oneHourAgo, $lte: now },
       });
 
       // Count events in previous 24 hours
       const last24hEvents = await db.collection("events").countDocuments({
         projectId: project._id,
-        timestamp: { $gte: twentyFourHoursAgo, $lt: oneHourAgo }
+        timestamp: { $gte: twentyFourHoursAgo, $lt: oneHourAgo },
       });
 
       const hourlyAverage = last24hEvents / 24;
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       // Simple anomaly detection: if the last hour is 50% lower than the 24h average, and average > 10
       if (hourlyAverage > 10 && lastHourEvents < hourlyAverage * 0.5) {
         stats.anomalies++;
-        
+
         // Trigger In-App Notification
         await sendInAppNotification({
           companyId: project.companyId,
@@ -52,14 +52,14 @@ export async function GET(request: NextRequest) {
           triggerDetails: `Event volume for project ${project.name} dropped significantly. Last hour: ${lastHourEvents}, Average: ${Math.round(hourlyAverage)}`,
           value: lastHourEvents,
           threshold: hourlyAverage * 0.5,
-          timestamp: now
+          timestamp: now,
         });
       }
     }
 
     return createSuccessResponse({
       message: "Anomaly detection complete",
-      stats
+      stats,
     });
   } catch (error) {
     console.error("Anomaly detector failed:", error);
