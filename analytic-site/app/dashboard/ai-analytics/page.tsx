@@ -11,7 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Sparkles, Calendar, Download, Mail, History, FileText } from "lucide-react";
+import {
+  Loader2,
+  Sparkles,
+  Calendar,
+  Download,
+  Mail,
+  History,
+  FileText,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useToast } from "@/hooks/use-toast";
@@ -211,29 +221,40 @@ export default function AIAnalyticsPage() {
                   onClick={() =>
                     setCurrentReport(currentReport?._id === report._id ? null : report)
                   }
-                  className={`w-full text-left p-3 rounded-lg text-sm transition-colors border ${
+                  className={`w-full text-left transition-all duration-300 ${
                     currentReport?._id === report._id
-                      ? "bg-primary/10 border-primary/20 text-foreground"
-                      : "hover:bg-secondary/50 border-transparent text-muted-foreground"
+                      ? "bg-linear-to-r from-primary/10 to-transparent border-l-2 border-primary text-foreground shadow-sm"
+                      : "hover:bg-secondary/40 text-muted-foreground hover:scale-[1.02]"
                   }`}
                 >
-                  <div className="font-medium capitalize flex items-center gap-2">
-                    {report.period} Report
-                    {report.status === "pending" && (
-                      <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                    )}
-                    {report.status === "failed" && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">
-                        Failed
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs opacity-70 mt-1">
-                    {new Date(report.generatedAt).toLocaleDateString()} •{" "}
-                    {new Date(report.generatedAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <div className="p-4 flex gap-3 items-start">
+                    <div className="mt-0.5 shrink-0">
+                      {report.status === "pending" ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      ) : report.status === "failed" ? (
+                        <XCircle className="w-4 h-4 text-destructive" />
+                      ) : (
+                        <CheckCircle2 className="w-4 h-4 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold capitalize flex items-center gap-2">
+                        {report.period} Report
+                        {report.status === "failed" && (
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">
+                            Failed
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs opacity-70 mt-1.5 flex items-center gap-1.5">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(report.generatedAt).toLocaleDateString()} •{" "}
+                        {new Date(report.generatedAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </button>
               ))
@@ -332,23 +353,29 @@ export default function AIAnalyticsPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-xl prose-h2:mt-8 prose-p:leading-relaxed prose-li:marker:text-primary">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {currentReport.content}
-                    </ReactMarkdown>
+                  <div className="bg-background border border-border/50 rounded-xl p-8 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-32 bg-primary/5 blur-[100px] rounded-full pointer-events-none -z-10" />
+                    <div className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h1:mb-6 prose-h2:text-xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-h2:border-border/50 prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:marker:text-primary prose-strong:text-foreground">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {currentReport.content || "Report generated but no content found."}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
-              <div className="w-16 h-16 rounded-2xl bg-secondary/50 flex items-center justify-center mb-4">
-                <FileText className="w-8 h-8 opacity-50" />
+            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 relative overflow-hidden">
+              <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
+              <div className="w-20 h-20 rounded-full bg-secondary/80 flex items-center justify-center mb-6 shadow-sm border border-border/30">
+                <FileText className="w-10 h-10 text-primary/50" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No Report Selected</h3>
-              <p className="text-center max-w-sm">
+              <h3 className="text-xl font-semibold text-foreground mb-2 z-10">
+                No Report Selected
+              </h3>
+              <p className="text-center max-w-md z-10">
                 Select a report from the history or generate a new one to get AI-powered insights
-                about your data.
+                about your data. Our advanced AI engine analyzes your trends automatically.
               </p>
             </div>
           )}
